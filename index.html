@@ -442,74 +442,142 @@
   <!-- Events Section -->
   <section class="events" id="events">
     <div class="container">
-      <p class="section-label reveal reveal--fade">Join the Celebration</p>
-      <h2 class="section-title reveal reveal--slide-up">Wedding Itinerary</h2>
+      <div class="events__header text-center">
+        <p class="section-label reveal reveal--fade">Three Chapters of Love</p>
+        <h2 class="section-title reveal reveal--slide-up">The Wedding Itinerary</h2>
+        <div class="events__ornament reveal reveal--scale" aria-hidden="true">
+          <svg width="80" height="20" viewBox="0 0 80 20" fill="none">
+            <path d="M0 10 H30 M50 10 H80 M40 4 L44 10 L40 16 L36 10 Z" stroke="#C5A059" stroke-width="1.2"/>
+          </svg>
+        </div>
+        <p class="events__subtitle reveal reveal--fade" data-delay="0.1">Three sacred gatherings across the Grecian seas and royal Chennai, uniting our worlds forever.</p>
+      </div>
+
       <div class="events__grid">
-        <!-- Event 1: Engagement -->
-        <div class="events__card reveal reveal--slide-up tilt-card" data-delay="0">
-          <span class="events__badge">Greece Destination</span>
-          <div class="events__icon">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
-              <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
-            </svg>
+        <!-- Event 1: Engagement (Nichiathartham) -->
+        <article class="events__card reveal reveal--slide-up tilt-card" data-delay="0">
+          <div class="events__card-media">
+            <img src="images/couple-boho.jpg" alt="Anirudh &amp; Kavya pre-wedding by the Aegean Coast" loading="lazy">
+            <div class="events__card-media-overlay"></div>
+            <span class="events__card-num">CHAPTER I</span>
+            <span class="events__card-chip">Athens Riviera</span>
           </div>
-          <h3 class="events__card-title">Engagement</h3>
-          <p class="events__card-date">November 10, 2026</p>
-          <p class="events__card-loc">Athens Riviera · Greece</p>
-          <div class="events__card-attire">
-            <span class="attire-label">Attire</span>
-            <span class="attire-val">Resort Luxury &amp; Pastel Couture</span>
-          </div>
-          <p class="events__card-text">Traditional Tamil Nichiathartham ceremony celebrating the promise of a lifetime against the serene backdrop of Greece.</p>
-          <button type="button" class="events__cal-btn" data-event-title="Anirudh &amp; Kavya Engagement (Nichiathartham)" data-event-loc="Athens Riviera, Greece" data-event-desc="Traditional Tamil Nichiathartham ceremony" data-event-start="20261110T160000Z" data-event-end="20261110T210000Z">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-            Add to Calendar
-          </button>
-        </div>
+          <div class="events__card-body">
+            <div class="events__card-crest" aria-hidden="true">
+              <svg width="44" height="44" viewBox="0 0 60 60" fill="none">
+                <circle cx="26" cy="30" r="13" stroke="#C5A059" stroke-width="1.8" fill="none"/>
+                <circle cx="34" cy="30" r="13" stroke="#F5DCA3" stroke-width="1.8" fill="none"/>
+                <path d="M22 20 Q18 12 26 14 Q30 20 26 22" fill="#F5DCA3" opacity="0.8"/>
+                <path d="M38 20 Q42 12 34 14 Q30 20 34 22" fill="#C5A059" opacity="0.8"/>
+                <circle cx="30" cy="17" r="2.5" fill="#FFFDF9"/>
+              </svg>
+            </div>
+            <h3 class="events__card-title">The Nichiathartham</h3>
+            <p class="events__card-subtitle">Traditional Tamil Engagement</p>
+            <div class="events__card-divider"></div>
+            
+            <div class="events__meta-row">
+              <span class="events__meta-date">Tuesday, November 10, 2026</span>
+              <span class="events__meta-time">4:00 PM – 9:00 PM EET</span>
+              <span class="events__meta-loc">Athens Riviera · Greece</span>
+            </div>
 
-        <!-- Event 2: The Wedding -->
-        <div class="events__card events__card--featured reveal reveal--slide-up tilt-card" data-delay="0.15">
-          <span class="events__badge events__badge--royal">The Main Ceremony</span>
-          <div class="events__icon">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-            </svg>
-          </div>
-          <h3 class="events__card-title">The Wedding</h3>
-          <p class="events__card-date">November 11, 2026</p>
-          <p class="events__card-loc">Athens Coastline · Greece</p>
-          <div class="events__card-attire">
-            <span class="attire-label">Attire</span>
-            <span class="attire-val">Traditional Ivory &amp; Gold Silk</span>
-          </div>
-          <p class="events__card-text">The sacred ceremony where two hearts unite under floral arches overlooking the Aegean Sea.</p>
-          <button type="button" class="events__cal-btn events__cal-btn--royal" data-event-title="Anirudh &amp; Kavya Wedding Ceremony" data-event-loc="Athens, Greece" data-event-desc="The Sacred Wedding Ceremony overlooking the Aegean Sea" data-event-start="20261111T110000Z" data-event-end="20261111T160000Z">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-            Add to Calendar
-          </button>
-        </div>
+            <div class="events__card-attire">
+              <span class="attire-label">DRESS CODE</span>
+              <span class="attire-val">Resort Luxury &amp; Pastel Couture</span>
+            </div>
 
-        <!-- Event 3: Grand Reception -->
-        <div class="events__card reveal reveal--slide-up tilt-card" data-delay="0.3">
-          <span class="events__badge">Chennai Celebration</span>
-          <div class="events__icon">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
-              <path d="M9 18l6-6-6-6"/><path d="M4 12a8 8 0 1 1 16 0 8 8 0 0 1-16 0z"/>
-            </svg>
+            <p class="events__card-text">A sunset ring ceremony celebrating the eternal promise against the serene Mediterranean coastline.</p>
+
+            <button type="button" class="events__cal-btn" data-event-title="Anirudh &amp; Kavya Engagement (Nichiathartham)" data-event-loc="Athens Riviera, Greece" data-event-desc="Traditional Tamil Nichiathartham ceremony" data-event-start="20261110T160000Z" data-event-end="20261110T210000Z">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              <span>Add to Calendar</span>
+            </button>
           </div>
-          <h3 class="events__card-title">Grand Reception</h3>
-          <p class="events__card-date">November 21, 2026</p>
-          <p class="events__card-loc">Chennai · Tamil Nadu</p>
-          <div class="events__card-attire">
-            <span class="attire-label">Attire</span>
-            <span class="attire-val">Royal Indian Formals &amp; Black Tie</span>
+        </article>
+
+        <!-- Event 2: The Sacred Wedding Ceremony -->
+        <article class="events__card events__card--featured reveal reveal--slide-up tilt-card" data-delay="0.15">
+          <div class="events__card-ribbon">The Main Ceremony</div>
+          <div class="events__card-media">
+            <img src="images/hero-couple.webp" alt="Anirudh &amp; Kavya under wedding floral canopy" loading="lazy">
+            <div class="events__card-media-overlay"></div>
+            <span class="events__card-num">CHAPTER II</span>
+            <span class="events__card-chip events__card-chip--gold">Aegean Coastline</span>
           </div>
-          <p class="events__card-text">An elegant evening of dinner, music, and celebration with family, esteemed luminaries, and dear friends.</p>
-          <button type="button" class="events__cal-btn" data-event-title="Anirudh &amp; Kavya Grand Wedding Reception" data-event-loc="Chennai, India" data-event-desc="Grand Wedding Reception celebrating Anirudh & Kavya" data-event-start="20261121T190000Z" data-event-end="20261121T233000Z">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-            Add to Calendar
-          </button>
-        </div>
+          <div class="events__card-body">
+            <div class="events__card-crest" aria-hidden="true">
+              <svg width="44" height="44" viewBox="0 0 60 60" fill="none">
+                <path d="M30 8 L32 16 L40 16 L33 21 L36 29 L30 24 L24 29 L27 21 L20 16 L28 16 Z" fill="#F5DCA3"/>
+                <circle cx="30" cy="30" r="22" stroke="#C5A059" stroke-width="1.2" stroke-dasharray="2 3"/>
+                <path d="M16 44 Q30 36 44 44" stroke="#F5DCA3" stroke-width="1.6" fill="none"/>
+                <path d="M22 40 Q30 32 38 40" stroke="#C5A059" stroke-width="1.2" fill="none"/>
+              </svg>
+            </div>
+            <h3 class="events__card-title">The Sacred Wedding</h3>
+            <p class="events__card-subtitle">Tirumangalyam &amp; Vedic Muhurtham</p>
+            <div class="events__card-divider"></div>
+
+            <div class="events__meta-row">
+              <span class="events__meta-date">Wednesday, November 11, 2026</span>
+              <span class="events__meta-time">11:00 AM – 3:30 PM EET</span>
+              <span class="events__meta-loc">Athens Coastline · Greece</span>
+            </div>
+
+            <div class="events__card-attire events__card-attire--gold">
+              <span class="attire-label">DRESS CODE</span>
+              <span class="attire-val">Traditional Kanjeevaram Ivory &amp; Gold Silk</span>
+            </div>
+
+            <p class="events__card-text">Two hearts united forever under white floral canopies overlooking the tranquil turquoise waters of Greece.</p>
+
+            <button type="button" class="events__cal-btn events__cal-btn--royal" data-event-title="Anirudh &amp; Kavya Wedding Ceremony" data-event-loc="Athens, Greece" data-event-desc="The Sacred Wedding Ceremony overlooking the Aegean Sea" data-event-start="20261111T110000Z" data-event-end="20261111T160000Z">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              <span>Add to Calendar</span>
+            </button>
+          </div>
+        </article>
+
+        <!-- Event 3: Grand Reception (Chennai) -->
+        <article class="events__card reveal reveal--slide-up tilt-card" data-delay="0.3">
+          <div class="events__card-media">
+            <img src="images/couple-walk.webp" alt="Anirudh &amp; Kavya walking through flower petals" loading="lazy">
+            <div class="events__card-media-overlay"></div>
+            <span class="events__card-num">CHAPTER III</span>
+            <span class="events__card-chip">Chennai, India</span>
+          </div>
+          <div class="events__card-body">
+            <div class="events__card-crest" aria-hidden="true">
+              <svg width="44" height="44" viewBox="0 0 60 60" fill="none">
+                <circle cx="30" cy="30" r="22" stroke="#C5A059" stroke-width="1.2" stroke-dasharray="3 3"/>
+                <path d="M30 14 L30 46 M14 30 L46 30 M19 19 L41 41 M19 41 L41 19" stroke="#F5DCA3" stroke-width="1.2" opacity="0.8"/>
+                <circle cx="30" cy="30" r="6" fill="#C5A059"/>
+                <circle cx="30" cy="30" r="3" fill="#FFFDF9"/>
+              </svg>
+            </div>
+            <h3 class="events__card-title">The Grand Reception</h3>
+            <p class="events__card-subtitle">An Evening of Melody &amp; Royalty</p>
+            <div class="events__card-divider"></div>
+
+            <div class="events__meta-row">
+              <span class="events__meta-date">Saturday, November 21, 2026</span>
+              <span class="events__meta-time">7:00 PM Onwards IST</span>
+              <span class="events__meta-loc">Chennai · Tamil Nadu</span>
+            </div>
+
+            <div class="events__card-attire">
+              <span class="attire-label">DRESS CODE</span>
+              <span class="attire-val">Royal Indian Couture &amp; Black Tie</span>
+            </div>
+
+            <p class="events__card-text">An opulent celebratory evening of live music, dinner, and joy with family, esteemed dignitaries, and friends.</p>
+
+            <button type="button" class="events__cal-btn" data-event-title="Anirudh &amp; Kavya Grand Wedding Reception" data-event-loc="Chennai, India" data-event-desc="Grand Wedding Reception celebrating Anirudh & Kavya" data-event-start="20261121T190000Z" data-event-end="20261121T233000Z">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              <span>Add to Calendar</span>
+            </button>
+          </div>
+        </article>
       </div>
     </div>
   </section>
