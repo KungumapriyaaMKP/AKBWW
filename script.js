@@ -124,10 +124,12 @@
 
   // Find nearest decoded frame so playback never stalls or stutters
   function nearestLoadedFrame(idx) {
-    if (frameImages[idx]) return idx;
+    if (frameImages[idx] && frameImages[idx].complete && frameImages[idx].naturalWidth) return idx;
     for (var d = 1; d < totalFrames; d++) {
-      if (frameImages[idx - d]) return idx - d;
-      if (frameImages[idx + d]) return idx + d;
+      var fwd = idx + d;
+      var bwd = idx - d;
+      if (fwd < totalFrames && frameImages[fwd] && frameImages[fwd].complete && frameImages[fwd].naturalWidth) return fwd;
+      if (bwd >= 0 && frameImages[bwd] && frameImages[bwd].complete && frameImages[bwd].naturalWidth) return bwd;
     }
     return -1;
   }
@@ -139,7 +141,7 @@
 
   function frameLoop() {
     var delta = targetFramePos - smoothFramePos;
-    smoothFramePos += delta * 0.16;
+    smoothFramePos += delta * 0.18;
     if (Math.abs(delta) < 0.04) smoothFramePos = targetFramePos;
 
     var idx = nearestLoadedFrame(Math.round(smoothFramePos));
@@ -166,19 +168,33 @@
 
     var img = new Image();
     var padded = String(index).padStart(4, '0');
-    img.src = 'frames_opt/f' + padded + '.jpg';
 
     function onReady() {
       frameImages[index] = img;
       if (onFirstReady) onFirstReady(img);
+      // Reactive re-draw: If the user is currently looking for this frame, draw immediately
+      if (Math.abs(Math.round(smoothFramePos) - index) <= 2) {
+        drawFrame(index);
+      }
     }
 
-    if ('decode' in img) {
-      img.decode().then(onReady).catch(function () {
-        img.onload = onReady;
-      });
-    } else {
-      img.onload = onReady;
+    img.onload = onReady;
+    img.onerror = function () {
+      frameRequested[index] = false;
+    };
+    img.src = 'frames_opt/f' + padded + '.jpg';
+  }
+
+  // Immediately request a window of contiguous frames around user's scroll position
+  function requestFrameWindow(centerIdx) {
+    if (totalFrames <= 0) return;
+    var center = Math.round(centerIdx);
+    var radius = 18;
+    for (var r = 0; r <= radius; r++) {
+      var fwd = center + r;
+      if (fwd < totalFrames) requestSingleFrame(fwd);
+      var bwd = center - r;
+      if (bwd >= 0) requestSingleFrame(bwd);
     }
   }
 
@@ -192,27 +208,32 @@
       finishLoading(); // Immediate zero-delay reveal!
     });
 
-    // 2. Initial Scroll Buffer: Frames 1 through 20 immediately
-    for (var b = 1; b <= Math.min(20, totalFrames - 1); b++) {
+    // 2. Video 1 Opening Buffer: Frames 1 through 24
+    for (var b = 1; b <= Math.min(24, totalFrames - 1); b++) {
       requestSingleFrame(b);
     }
 
-    // 3. Keyframe Skeleton: Load every 4th frame (rapid preview coverage)
+    // 3. Video 2 Opening Priority: Frames 188 through 212
+    // Ensures immediate arrival into the second video drone sequence on mobile!
+    for (var v2 = 188; v2 <= Math.min(212, totalFrames - 1); v2++) {
+      requestSingleFrame(v2);
+    }
+
+    // 4. Keyframe Skeleton: Load every 4th frame across the entire timeline
     setTimeout(function () {
-      for (var k = 24; k < totalFrames; k += 4) {
+      for (var k = 28; k < totalFrames; k += 4) {
         requestSingleFrame(k);
       }
 
-      // 4. Concurrently stream in-between frames in small batches
+      // 5. Concurrently stream in-between frames in small responsive batches
       var remainingQueue = [];
       for (var i = 0; i < totalFrames; i++) {
         if (!frameRequested[i]) remainingQueue.push(i);
       }
 
-      var BATCH_SIZE = 6;
+      var BATCH_SIZE = 8;
       function streamNextBatch() {
         if (!remainingQueue.length) return;
-        // Prioritize frames closest to user's current scroll position
         var cur = Math.round(smoothFramePos);
         remainingQueue.sort(function (a, b) {
           return Math.abs(a - cur) - Math.abs(b - cur);
@@ -224,16 +245,12 @@
         });
 
         if (remainingQueue.length > 0) {
-          if ('requestIdleCallback' in window) {
-            window.requestIdleCallback(streamNextBatch, { timeout: 200 });
-          } else {
-            setTimeout(streamNextBatch, 40);
-          }
+          setTimeout(streamNextBatch, 35);
         }
       }
 
       streamNextBatch();
-    }, 120);
+    }, 100);
   }
 
   function initScrollVideo() {
@@ -258,6 +275,7 @@
 
     if (totalFrames > 0) {
       targetFramePos = progress * (totalFrames - 1);
+      requestFrameWindow(targetFramePos);
       startFrameLoop();
     }
 
@@ -286,9 +304,11 @@
 
     if (scrollHint) {
       if (progress <= 0.03) {
+        scrollHint.style.display = 'block';
         scrollHint.style.opacity = (1 - progress / 0.03).toFixed(3);
         scrollHint.style.visibility = 'visible';
       } else {
+        scrollHint.style.display = 'none';
         scrollHint.style.opacity = '0';
         scrollHint.style.visibility = 'hidden';
       }

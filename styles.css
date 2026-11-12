@@ -32,7 +32,7 @@ body {
   color: #2C2C2C;
   background-color: #FFFDF9;
   line-height: 1.7;
-  overflow-x: hidden;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -637,8 +637,8 @@ a {
 }
 
 @keyframes scrollBounce {
-  0%, 100% { transform: translateX(-50%) translateY(0); opacity: 1; }
-  50% { transform: translateX(-50%) translateY(12px); opacity: 0.5; }
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(10px); }
 }
 
 /* ---------- Floating Petals ---------- */
@@ -935,18 +935,6 @@ a {
   color: #FFFDF9;
   letter-spacing: 0.08em;
   text-shadow: 0 4px 30px rgba(0, 0, 0, 0.9), 0 2px 8px rgba(0, 0, 0, 0.95);
-}
-
-.image-break__text::after {
-  content: 'XI · XI · MMXXVI';
-  display: block;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.76rem;
-  font-weight: 600;
-  letter-spacing: 0.35em;
-  color: #F5DCA3;
-  margin-top: 14px;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
 }
 
 /* ---------- Gallery ---------- */
@@ -2407,12 +2395,29 @@ a {
 @media (max-width: 768px) {
   html {
     font-size: 15px;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   body {
-    overflow-x: hidden;
+    overflow-x: clip;
     width: 100%;
+  }
+
+  .scroll-video {
+    height: 600vh; /* Smooth, natural touch scrolling through drone sequences 1 & 2 */
+  }
+
+  .scroll-video__stage {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    pointer-events: none;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
   }
 
   .container {
@@ -2737,12 +2742,6 @@ a {
   .image-break__text p {
     font-size: clamp(1.8rem, 6.5vw, 2.5rem);
     letter-spacing: 0.05em;
-  }
-
-  .image-break__text::after {
-    font-size: 0.68rem;
-    letter-spacing: 0.25em;
-    margin-top: 10px;
   }
 
   /* Gallery Section */
