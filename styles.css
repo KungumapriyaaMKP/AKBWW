@@ -2210,7 +2210,7 @@ a {
 .couple__grid {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  align-items: center;
+  align-items: start;
   gap: 48px;
   max-width: 1100px;
   margin: 60px auto 0;
@@ -2223,9 +2223,9 @@ a {
   text-align: center;
 }
 
-/* Offset the bride card for an editorial, magazine-spread rhythm */
+/* Symmetrical alignment: Groom and Bride cards on the exact same horizontal line */
 .couple__card--bride {
-  margin-top: 90px;
+  margin-top: 0;
 }
 
 .couple__frame {
