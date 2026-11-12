@@ -1603,6 +1603,79 @@ a {
   color: rgba(245, 220, 163, 0.9);
 }
 
+/* ---------- Celebratory Popper Effect & Button ---------- */
+.countdown-popper-wrap {
+  margin-top: 28px;
+  display: flex;
+  justify-content: center;
+}
+
+.countdown-popper-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, rgba(197, 160, 89, 0.22) 0%, rgba(92, 36, 52, 0.65) 100%);
+  border: 1px solid rgba(245, 220, 163, 0.6);
+  border-radius: 50px;
+  color: #FFFDF9;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), inset 0 0 14px rgba(245, 220, 163, 0.18);
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
+
+.countdown-popper-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(245, 220, 163, 0.35), transparent);
+  transition: left 0.6s ease;
+}
+
+.countdown-popper-btn:hover::before {
+  left: 100%;
+}
+
+.countdown-popper-btn:hover {
+  transform: translateY(-2px) scale(1.04);
+  border-color: #F5DCA3;
+  box-shadow: 0 12px 32px rgba(197, 160, 89, 0.45), inset 0 0 20px rgba(245, 220, 163, 0.35);
+}
+
+.countdown-popper-btn:active,
+.countdown-popper-btn.popped {
+  transform: translateY(1px) scale(0.96);
+}
+
+.countdown-popper-btn .popper-icon {
+  font-size: 1.15rem;
+  display: inline-block;
+  animation: popperWiggle 2.2s ease-in-out infinite;
+}
+
+.countdown-popper-btn .popper-sparkle {
+  color: #F5DCA3;
+  font-size: 0.95rem;
+}
+
+@keyframes popperWiggle {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-14deg) scale(1.18); }
+  50% { transform: rotate(12deg) scale(1.12); }
+  75% { transform: rotate(-8deg) scale(1.06); }
+}
+
 /* ---------- Gallery Subtitle & Lightbox Card Enhancements ---------- */
 .gallery__subtitle {
   font-family: 'Cormorant Garamond', serif;

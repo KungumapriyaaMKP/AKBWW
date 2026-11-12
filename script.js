@@ -473,21 +473,42 @@
     var countHours = document.getElementById('countHours');
     var countMinutes = document.getElementById('countMinutes');
     var countSeconds = document.getElementById('countSeconds');
+    var countdownHeading = document.getElementById('countdownHeading');
+    var countdownCard = document.getElementById('countdownCard');
+    var popperBtn = document.getElementById('countdownPopperBtn');
     if (!countDays) return;
 
-    var weddingDate = new Date('2026-11-11T10:00:00+02:00').getTime();
+    var greeceWedding = new Date('2026-11-11T11:00:00+02:00').getTime();
+    var chennaiReception = new Date('2026-11-21T19:00:00+05:30').getTime();
+    var hasCelebrated = false;
 
     function update() {
       var now = Date.now();
-      var diff = weddingDate - now;
+      var targetDate = greeceWedding;
 
-      if (diff <= 0) {
+      // Smart event switching: Greece ceremony vs. Chennai reception
+      if (now >= greeceWedding && now < chennaiReception) {
+        targetDate = chennaiReception;
+        if (countdownHeading) {
+          countdownHeading.textContent = 'Counting Down · Chennai Reception';
+        }
+      } else if (now >= chennaiReception) {
         countDays.textContent = '00';
         countHours.textContent = '00';
         countMinutes.textContent = '00';
         countSeconds.textContent = '00';
+        if (countdownHeading) {
+          countdownHeading.textContent = 'The Celebration Has Begun!';
+        }
+        if (!hasCelebrated) {
+          hasCelebrated = true;
+          triggerPartyPoppers();
+        }
         return;
       }
+
+      var diff = targetDate - now;
+      if (diff <= 0) diff = 0;
 
       var d = Math.floor(diff / (1000 * 60 * 60 * 24));
       var h = Math.floor((diff / (1000 * 60 * 60)) % 24);
@@ -502,6 +523,39 @@
 
     update();
     setInterval(update, 1000);
+
+    // Click interactive party popper triggers
+    if (popperBtn) {
+      popperBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        triggerPartyPoppers();
+        popperBtn.classList.add('popped');
+        setTimeout(function () { popperBtn.classList.remove('popped'); }, 500);
+      });
+    }
+
+    if (countdownCard) {
+      countdownCard.addEventListener('click', function () {
+        triggerPartyPoppers();
+      });
+    }
+
+    // Auto-fire party poppers when Countdown card scrolls into view
+    var countdownSection = document.getElementById('countdown');
+    if (countdownSection && 'IntersectionObserver' in window) {
+      var popperTriggered = false;
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting && !popperTriggered) {
+            popperTriggered = true;
+            setTimeout(function () {
+              triggerPartyPoppers();
+            }, 400);
+          }
+        });
+      }, { threshold: 0.3 });
+      obs.observe(countdownSection);
+    }
   }
 
   // ---------- 3. Background Wedding Music & Audio Atmosphere ----------
@@ -701,68 +755,172 @@
     });
   }
 
-  // ---------- 6. Celebratory Confetti Burst ----------
-  function triggerConfetti() {
+  // ---------- 6. Grand Celebratory Party Popper Effect ----------
+  var popperParticles = [];
+  var popperAnimId = null;
+
+  function playPopperSound() {
+    try {
+      var AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      var actx = new AudioCtx();
+      var t = actx.currentTime;
+
+      // Champagne pop tone
+      var osc = actx.createOscillator();
+      var gain = actx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(460, t);
+      osc.frequency.exponentialRampToValueAtTime(75, t + 0.08);
+
+      gain.gain.setValueAtTime(0.3, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+
+      osc.connect(gain);
+      gain.connect(actx.destination);
+      osc.start(t);
+      osc.stop(t + 0.13);
+
+      // Noise texture burst (cork pop)
+      var bufferSize = Math.floor(actx.sampleRate * 0.04);
+      var buffer = actx.createBuffer(1, bufferSize, actx.sampleRate);
+      var data = buffer.getChannelData(0);
+      for (var i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.2));
+      }
+      var noise = actx.createBufferSource();
+      noise.buffer = buffer;
+      var noiseGain = actx.createGain();
+      noiseGain.gain.setValueAtTime(0.2, t);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+      noise.connect(noiseGain);
+      noiseGain.connect(actx.destination);
+      noise.start(t);
+    } catch (e) {
+      // AudioContext autoplay catch
+    }
+  }
+
+  function triggerPartyPoppers() {
     var cvs = document.getElementById('confettiCanvas');
     if (!cvs) return;
     var ctx = cvs.getContext('2d');
     var w = cvs.width = window.innerWidth;
     var h = cvs.height = window.innerHeight;
 
-    var colors = ['#C5A059', '#D4A69A', '#8B3A4A', '#F5DCA3', '#FFFDF9', '#722F37'];
-    var particles = [];
-    var count = 120;
+    playPopperSound();
 
-    for (var i = 0; i < count; i++) {
-      particles.push({
-        x: w * 0.5 + (Math.random() - 0.5) * 220,
-        y: h * 0.72,
-        vx: (Math.random() - 0.5) * 14,
-        vy: -Math.random() * 18 - 8,
-        size: Math.random() * 8 + 4,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        rotation: Math.random() * 360,
-        rotationSpeed: (Math.random() - 0.5) * 9,
-        opacity: 1,
-        decay: Math.random() * 0.008 + 0.005
-      });
-    }
+    var colors = [
+      '#F5DCA3', '#C5A059', '#E6C587', '#D4A69A', 
+      '#8B3A4A', '#FFFDF9', '#E5A93C', '#B8860B', '#FFD1DC'
+    ];
+    var types = ['strip', 'star', 'petal', 'dot'];
 
-    var animId;
+    // Left cannon, right cannon, and center fountain
+    var cannons = [
+      { x: w * 0.15, y: h * 0.82, angle: -55, spread: 40, count: 70 },
+      { x: w * 0.85, y: h * 0.82, angle: -125, spread: 40, count: 70 },
+      { x: w * 0.50, y: h * 0.78, angle: -90, spread: 65, count: 60 }
+    ];
+
+    cannons.forEach(function (c) {
+      for (var i = 0; i < c.count; i++) {
+        var angRad = ((c.angle + (Math.random() - 0.5) * c.spread) * Math.PI) / 180;
+        var speed = Math.random() * 18 + 10;
+
+        popperParticles.push({
+          x: c.x + (Math.random() - 0.5) * 20,
+          y: c.y + (Math.random() - 0.5) * 20,
+          vx: Math.cos(angRad) * speed,
+          vy: Math.sin(angRad) * speed,
+          gravity: Math.random() * 0.16 + 0.22,
+          drag: Math.random() * 0.02 + 0.965,
+          size: Math.random() * 9 + 5,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          type: types[Math.floor(Math.random() * types.length)],
+          rotation: Math.random() * 360,
+          rotationSpeed: (Math.random() - 0.5) * 12,
+          wobble: Math.random() * Math.PI * 2,
+          wobbleSpeed: Math.random() * 0.12 + 0.06,
+          opacity: 1,
+          decay: Math.random() * 0.005 + 0.004
+        });
+      }
+    });
+
+    if (popperAnimId) cancelAnimationFrame(popperAnimId);
+
     function render() {
       ctx.clearRect(0, 0, w, h);
-      var active = false;
+      var hasActive = false;
 
-      particles.forEach(function (p) {
+      for (var i = 0; i < popperParticles.length; i++) {
+        var p = popperParticles[i];
+        p.vx *= p.drag;
+        p.vy = p.vy * p.drag + p.gravity;
         p.x += p.vx;
         p.y += p.vy;
-        p.vy += 0.38;
-        p.vx *= 0.98;
         p.rotation += p.rotationSpeed;
+        p.wobble += p.wobbleSpeed;
         p.opacity -= p.decay;
 
-        if (p.opacity > 0) {
-          active = true;
+        if (p.opacity > 0 && p.y < h + 40) {
+          hasActive = true;
           ctx.save();
           ctx.translate(p.x, p.y);
           ctx.rotate((p.rotation * Math.PI) / 180);
-          ctx.fillStyle = p.color;
           ctx.globalAlpha = Math.max(0, p.opacity);
-          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.65);
+          ctx.fillStyle = p.color;
+
+          var xWobble = Math.cos(p.wobble);
+
+          if (p.type === 'strip') {
+            // Foil fluttering ribbon
+            ctx.fillRect(-p.size * 0.5 * xWobble, -p.size * 0.35, p.size * xWobble, p.size * 0.7);
+          } else if (p.type === 'star') {
+            // Shimmering 4-pointed gold star
+            var s = p.size * 0.7;
+            ctx.beginPath();
+            ctx.moveTo(0, -s);
+            ctx.quadraticCurveTo(0, 0, s, 0);
+            ctx.quadraticCurveTo(0, 0, 0, s);
+            ctx.quadraticCurveTo(0, 0, -s, 0);
+            ctx.quadraticCurveTo(0, 0, 0, -s);
+            ctx.fill();
+          } else if (p.type === 'petal') {
+            // Rose petal
+            ctx.beginPath();
+            ctx.ellipse(0, 0, Math.abs(p.size * 0.45 * xWobble), p.size * 0.7, 0, 0, Math.PI * 2);
+            ctx.fill();
+          } else {
+            // Glowing round sparkle
+            ctx.beginPath();
+            ctx.arc(0, 0, p.size * 0.35, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
           ctx.restore();
         }
+      }
+
+      // Filter dead particles
+      popperParticles = popperParticles.filter(function (p) {
+        return p.opacity > 0 && p.y < h + 40;
       });
 
-      if (active) {
-        animId = requestAnimationFrame(render);
+      if (hasActive) {
+        popperAnimId = requestAnimationFrame(render);
       } else {
         ctx.clearRect(0, 0, w, h);
-        cancelAnimationFrame(animId);
+        popperAnimId = null;
       }
     }
 
     render();
   }
+
+  // Backwards-compatible alias for existing triggers
+  var triggerConfetti = triggerPartyPoppers;
 
   // ---------- 7. RSVP Form Submission ----------
   var rsvpForm = document.getElementById('rsvpForm');
