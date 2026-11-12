@@ -484,13 +484,15 @@ a {
 /* ---------- Hero Static (after scroll video) ---------- */
 .hero-static {
   position: relative;
-  min-height: 85vh;
-  height: 90vh;
-  max-height: 1080px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
+  padding-bottom: clamp(45px, 8vh, 85px);
 }
 
 .hero-static__bg {
@@ -511,9 +513,10 @@ a {
   inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba(20, 10, 15, 0.25) 0%,
-    rgba(92, 36, 52, 0.35) 50%,
-    rgba(20, 10, 15, 0.45) 100%
+    rgba(20, 10, 15, 0.08) 0%,
+    rgba(20, 10, 15, 0.04) 40%,
+    rgba(20, 10, 15, 0.4) 75%,
+    rgba(20, 10, 15, 0.75) 100%
   );
   z-index: 1;
 }
@@ -532,18 +535,19 @@ a {
   font-weight: 500;
   font-style: italic;
   line-height: 1.5;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   color: #FFFFFF;
-  text-shadow: 0 3px 20px rgba(0, 0, 0, 0.9), 0 1px 4px rgba(0, 0, 0, 0.95);
+  text-shadow: 0 3px 20px rgba(0, 0, 0, 0.95), 0 1px 4px rgba(0, 0, 0, 0.95);
 }
 
 .hero-static__date {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
+  display: inline-block;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.3rem, 2.8vw, 2rem);
   font-weight: 600;
   letter-spacing: 0.35em;
   color: #F5DCA3;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9), 0 1px 3px rgba(0, 0, 0, 0.95);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.95), 0 0 20px rgba(245, 220, 163, 0.45);
 }
 
 .hero__subtitle {
@@ -2718,12 +2722,15 @@ a {
 
   /* Hero Static & Image Break Section (Full Portrait Framing) */
   .hero-static {
-    height: 75vh;
-    min-height: 520px;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding-bottom: 45px;
   }
 
   .hero-static__bg img {
-    object-position: center 5%;
+    object-position: center 6%;
   }
 
   .image-break {
