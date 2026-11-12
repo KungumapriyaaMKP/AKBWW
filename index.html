@@ -215,14 +215,14 @@
   <!-- Celebration Countdown Section -->
   <section class="countdown-section" id="countdown">
     <div class="container">
-      <div class="countdown-card reveal reveal--scale">
+      <div class="countdown-card reveal reveal--scale" id="countdownCard">
         <div class="countdown-card__ornament">
           <svg width="60" height="20" viewBox="0 0 60 20" fill="none">
             <path d="M0 10 H22 M38 10 H60 M30 2 L34 10 L30 18 L26 10 Z" stroke="#F5DCA3" stroke-width="1.2"/>
           </svg>
         </div>
         <p class="section-label">Counting Down To Forever</p>
-        <h3 class="countdown-heading">The Celebration Begins</h3>
+        <h3 class="countdown-heading" id="countdownHeading">The Celebration Begins</h3>
         <div class="countdown-grid" id="countdownGrid" data-target="2026-11-11T11:00:00+02:00">
           <div class="countdown-block">
             <span class="countdown-val" id="countDays">00</span>
@@ -245,6 +245,15 @@
           </div>
         </div>
         <p class="countdown-venue-note">November 10 &amp; 11 · Greece &nbsp;|&nbsp; November 21 · Chennai</p>
+
+        <!-- Interactive Celebration Popper Button -->
+        <div class="countdown-popper-wrap">
+          <button type="button" class="countdown-popper-btn" id="countdownPopperBtn" aria-label="Pop celebratory wedding confetti">
+            <span class="popper-icon">🎉</span>
+            <span class="popper-text">Pop Celebration</span>
+            <span class="popper-sparkle">✨</span>
+          </button>
+        </div>
       </div>
     </div>
   </section>
