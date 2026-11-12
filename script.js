@@ -1,16 +1,29 @@
 /* ============================================================
-   A & K Wedding Website - Luxury Editorial JavaScript
-   Scroll-driven video, bespoke audio atmosphere, editorial lightbox,
-   live countdown, interactive calendar, custom cursor & confetti.
-   Zero external dependencies - ultra fast & silky 60fps.
+   A & K Wedding Website - Ultra-Low-Latency Editorial JavaScript
+   Zero layout thrashing, asynchronous frame streaming, GPU-composited
+   scroll pipeline, zero-overhead passive listeners, locked 60fps.
    ============================================================ */
 
 (function () {
   'use strict';
 
-  // ---------- Page Loader ----------
+  // ---------- Page Loader & Fast Startup ----------
   var loader = document.getElementById('loader');
+  var loaderDismissed = false;
   document.body.classList.add('loading');
+
+  function finishLoading() {
+    if (!loader || loaderDismissed) return;
+    loaderDismissed = true;
+    loader.classList.add('loaded');
+    document.body.classList.remove('loading');
+    setTimeout(function () {
+      loader.style.display = 'none';
+    }, 400);
+  }
+
+  // Safety fallback: never keep user waiting more than 1.5s under any condition
+  setTimeout(finishLoading, 1500);
 
   // ---------- Scroll-Driven Video (Frame Sequence) ----------
   var canvas = document.getElementById('scrollCanvas');
@@ -20,118 +33,68 @@
   var scrollOverlay = document.querySelector('.scroll-video__overlay');
   var scrollHint = document.getElementById('scrollHint');
   var petalContainer = document.querySelector('.hero__petals');
+  var scrollProgress = document.getElementById('scrollProgress');
 
   var frameImages = [];
+  var frameRequested = {};
   var currentFrame = -1;
   var totalFrames = 0;
-  var framesLoaded = 0;
-  var framesReady = false;
+  var canvasW = 0;
+  var canvasH = 0;
 
-  // Detect frame count (uses fast global count when declared)
-  function detectFrameCount(callback) {
-    if (typeof window.SCROLL_FRAME_COUNT === 'number' && window.SCROLL_FRAME_COUNT > 0) {
-      callback(window.SCROLL_FRAME_COUNT);
-      return;
+  // Cached layout metrics to avoid forced reflows on scroll
+  var winH = window.innerHeight || 800;
+  var docHeight = 1;
+  var scrollSectionTop = 0;
+  var scrollSectionHeight = 1;
+  var storyTimelineTop = 0;
+  var storyTimelineHeight = 1;
+  var parallaxData = [];
+
+  function measureLayout() {
+    winH = window.innerHeight || 800;
+    docHeight = Math.max(document.documentElement.scrollHeight - winH, 1);
+
+    if (scrollSection) {
+      var r = scrollSection.getBoundingClientRect();
+      scrollSectionTop = r.top + window.scrollY;
+      scrollSectionHeight = Math.max(scrollSection.offsetHeight - winH, 1);
     }
-    var testIndex = 0;
-    var maxTest = 300;
-    function testNext() {
-      if (testIndex >= maxTest) {
-        callback(testIndex);
-        return;
-      }
-      var img = new Image();
-      var padded = String(testIndex).padStart(4, '0');
-      img.onload = function () {
-        testIndex++;
-        testNext();
-      };
-      img.onerror = function () {
-        callback(testIndex);
-      };
-      img.src = 'frames_opt/f' + padded + '.jpg';
+
+    var storyTimeline = document.querySelector('.story__timeline');
+    if (storyTimeline) {
+      var str = storyTimeline.getBoundingClientRect();
+      storyTimelineTop = str.top + window.scrollY;
+      storyTimelineHeight = Math.max(storyTimeline.offsetHeight, 1);
     }
-    testNext();
-  }
 
-  function initScrollVideo() {
-    detectFrameCount(function (count) {
-      if (count === 0) {
-        if (scrollSection) {
-          scrollSection.style.height = '100vh';
-          var video = document.createElement('video');
-          video.src = 'Seaside_wedding_venue_drone_shot_f6e5fffd_1080p.mp4';
-          video.autoplay = true;
-          video.muted = true;
-          video.loop = true;
-          video.playsInline = true;
-          video.style.cssText = 'position:sticky;top:0;left:0;width:100%;height:100vh;object-fit:cover;';
-          if (canvas) canvas.style.display = 'none';
-          scrollSection.insertBefore(video, scrollSection.firstChild);
-          if (scrollContent) scrollContent.classList.add('visible');
-          if (scrollOverlay) scrollOverlay.classList.add('active');
-        }
-        finishLoading();
-        return;
+    parallaxData = [];
+    var pBgs = document.querySelectorAll('.parallax-bg');
+    pBgs.forEach(function (bg) {
+      var sec = bg.closest('.quote-section') || bg.closest('.hero-static') || bg.parentElement;
+      if (sec) {
+        var sr = sec.getBoundingClientRect();
+        parallaxData.push({
+          bg: bg,
+          top: sr.top + window.scrollY,
+          height: sec.offsetHeight
+        });
       }
-
-      totalFrames = count;
-      loadAllFrames();
-      updateScrollVideo();
     });
-  }
 
-  function loadAllFrames() {
-    var loaded = 0;
-    var firstFrameLoaded = false;
-
-    for (var i = 0; i < totalFrames; i++) {
-      (function (index) {
-        var img = new Image();
-        var padded = String(index).padStart(4, '0');
-        img.src = 'frames_opt/f' + padded + '.jpg';
-
-        img.onload = function () {
-          frameImages[index] = img;
-          loaded++;
-          framesLoaded = loaded;
-
-          var loaderLine = document.querySelector('.loader__line');
-          if (loaderLine) {
-            var pct = Math.min((loaded / totalFrames) * 100, 100);
-            loaderLine.style.transform = 'scaleX(' + (pct / 100) + ')';
-          }
-
-          if (index === 0 && !firstFrameLoaded) {
-            firstFrameLoaded = true;
-            resizeCanvas();
-            drawFrame(0);
-          }
-
-          if (loaded >= Math.min(25, totalFrames) && !framesReady) {
-            framesReady = true;
-            finishLoading();
-          }
-        };
-
-        img.onerror = function () {
-          loaded++;
-          framesLoaded = loaded;
-          if (loaded >= Math.min(25, totalFrames) && !framesReady) {
-            framesReady = true;
-            finishLoading();
-          }
-        };
-      })(i);
-    }
+    resizeCanvas();
+    updateScrollVideo();
+    updateScrollProgress();
   }
 
   function resizeCanvas() {
     if (!canvas || !ctx2d) return;
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
     var rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
+    canvasW = rect.width;
+    canvasH = rect.height;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(canvasW * dpr);
+    canvas.height = Math.round(canvasH * dpr);
     ctx2d.scale(dpr, dpr);
     if (currentFrame >= 0 && frameImages[currentFrame]) {
       drawFrame(currentFrame);
@@ -143,29 +106,23 @@
     var img = frameImages[index];
     if (!img || !img.complete || !img.naturalWidth) return;
 
-    var rect = canvas.getBoundingClientRect();
-    var cW = rect.width;
-    var cH = rect.height;
+    var cW = canvasW;
+    var cH = canvasH;
     var imgW = img.naturalWidth;
     var imgH = img.naturalHeight;
 
     var scale = Math.max(cW / imgW, cH / imgH);
     var drawW = imgW * scale;
     var drawH = imgH * scale;
-    var offsetX = (cW - drawW) / 2;
-    var offsetY = (cH - drawH) / 2;
+    var offsetX = (cW - drawW) * 0.5;
+    var offsetY = (cH - drawH) * 0.5;
 
     ctx2d.clearRect(0, 0, cW, cH);
     ctx2d.drawImage(img, offsetX, offsetY, drawW, drawH);
     currentFrame = index;
   }
 
-  // ---------- Eased frame playback (silky scroll) ----------
-  var targetFramePos = 0;
-  var smoothFramePos = 0;
-  var frameLoopRunning = false;
-
-  // Find nearest decoded frame so playback never stalls on a still-loading frame
+  // Find nearest decoded frame so playback never stalls or stutters
   function nearestLoadedFrame(idx) {
     if (frameImages[idx]) return idx;
     for (var d = 1; d < totalFrames; d++) {
@@ -175,10 +132,15 @@
     return -1;
   }
 
+  // Smooth frame interpolation using sub-pixel easing
+  var targetFramePos = 0;
+  var smoothFramePos = 0;
+  var frameLoopRunning = false;
+
   function frameLoop() {
     var delta = targetFramePos - smoothFramePos;
-    smoothFramePos += delta * 0.14;
-    if (Math.abs(delta) < 0.05) smoothFramePos = targetFramePos;
+    smoothFramePos += delta * 0.16;
+    if (Math.abs(delta) < 0.04) smoothFramePos = targetFramePos;
 
     var idx = nearestLoadedFrame(Math.round(smoothFramePos));
     if (idx >= 0 && idx !== currentFrame) drawFrame(idx);
@@ -197,198 +159,239 @@
     }
   }
 
+  // ---------- Zero-Latency Prioritized Frame Streaming ----------
+  function requestSingleFrame(index, onFirstReady) {
+    if (index < 0 || index >= totalFrames || frameRequested[index]) return;
+    frameRequested[index] = true;
+
+    var img = new Image();
+    var padded = String(index).padStart(4, '0');
+    img.src = 'frames_opt/f' + padded + '.jpg';
+
+    function onReady() {
+      frameImages[index] = img;
+      if (onFirstReady) onFirstReady(img);
+    }
+
+    if ('decode' in img) {
+      img.decode().then(onReady).catch(function () {
+        img.onload = onReady;
+      });
+    } else {
+      img.onload = onReady;
+    }
+  }
+
+  function startIntelligentFrameStreaming() {
+    frameImages = new Array(totalFrames);
+
+    // 1. Critical Head: Frame 0 (Preloaded in HTML header)
+    requestSingleFrame(0, function () {
+      resizeCanvas();
+      drawFrame(0);
+      finishLoading(); // Immediate zero-delay reveal!
+    });
+
+    // 2. Initial Scroll Buffer: Frames 1 through 20 immediately
+    for (var b = 1; b <= Math.min(20, totalFrames - 1); b++) {
+      requestSingleFrame(b);
+    }
+
+    // 3. Keyframe Skeleton: Load every 4th frame (rapid preview coverage)
+    setTimeout(function () {
+      for (var k = 24; k < totalFrames; k += 4) {
+        requestSingleFrame(k);
+      }
+
+      // 4. Concurrently stream in-between frames in small batches
+      var remainingQueue = [];
+      for (var i = 0; i < totalFrames; i++) {
+        if (!frameRequested[i]) remainingQueue.push(i);
+      }
+
+      var BATCH_SIZE = 6;
+      function streamNextBatch() {
+        if (!remainingQueue.length) return;
+        // Prioritize frames closest to user's current scroll position
+        var cur = Math.round(smoothFramePos);
+        remainingQueue.sort(function (a, b) {
+          return Math.abs(a - cur) - Math.abs(b - cur);
+        });
+
+        var batch = remainingQueue.splice(0, BATCH_SIZE);
+        batch.forEach(function (idx) {
+          requestSingleFrame(idx);
+        });
+
+        if (remainingQueue.length > 0) {
+          if ('requestIdleCallback' in window) {
+            window.requestIdleCallback(streamNextBatch, { timeout: 200 });
+          } else {
+            setTimeout(streamNextBatch, 40);
+          }
+        }
+      }
+
+      streamNextBatch();
+    }, 120);
+  }
+
+  function initScrollVideo() {
+    var count = (typeof window.SCROLL_FRAME_COUNT === 'number' && window.SCROLL_FRAME_COUNT > 0)
+      ? window.SCROLL_FRAME_COUNT
+      : 362;
+
+    totalFrames = count;
+    startIntelligentFrameStreaming();
+  }
+
+  // ---------- Zero-Reflow Scroll Pipelines ----------
   function updateScrollVideo() {
     if (!scrollSection) return;
 
-    var rect = scrollSection.getBoundingClientRect();
-    var vh = window.innerHeight;
-    var sectionTop = rect.top;
-    var sectionHeight = rect.height - vh;
-
-    var progress = sectionHeight > 0 ? -sectionTop / sectionHeight : 0;
+    var scrollY = window.scrollY;
+    var progress = (scrollY - scrollSectionTop) / scrollSectionHeight;
     progress = Math.max(0, Math.min(1, progress));
 
-    // The title, overlay, hint and petals are position:fixed, so they must be
-    // explicitly hidden once the video section has scrolled out of view.
-    // inSection = the sticky video still fills the screen.
-    var inSection = rect.top <= 1 && rect.bottom > vh * 0.98;
-    var atTop = rect.top > -vh * 0.08;
+    var inSection = scrollY >= (scrollSectionTop - winH * 0.1) && scrollY <= (scrollSectionTop + scrollSectionHeight + winH * 0.1);
+    var atTop = scrollY < (scrollSectionTop + winH * 0.08);
 
-    // Drive the frame sequence (only once frames are known)
     if (totalFrames > 0) {
       targetFramePos = progress * (totalFrames - 1);
       startFrameLoop();
     }
 
-    // Names appear just after you start scrolling and fade out before the video ends
+    // Hero title floats gently up and dissolves smoothly as user begins scrolling,
+    // keeping the entire drone descent 100% unobstructed and cinematic
     if (scrollContent) {
-      scrollContent.classList.toggle('visible', inSection && progress > 0.03 && progress < 0.94);
+      if (progress <= 0.005) {
+        scrollContent.style.opacity = '1';
+        scrollContent.style.transform = 'translate(-50%, -50%)';
+        scrollContent.style.visibility = 'visible';
+      } else if (progress < 0.08) {
+        var fade = 1 - (progress - 0.005) / 0.075;
+        scrollContent.style.opacity = fade.toFixed(3);
+        var translateY = -50 - ((1 - fade) * 15);
+        scrollContent.style.transform = 'translate(-50%, ' + translateY.toFixed(2) + '%)';
+        scrollContent.style.visibility = 'visible';
+      } else {
+        scrollContent.style.opacity = '0';
+        scrollContent.style.visibility = 'hidden';
+      }
     }
 
     if (scrollOverlay) {
-      scrollOverlay.classList.toggle('active', inSection && progress > 0.05 && progress < 0.97);
+      scrollOverlay.style.opacity = progress < 0.08 ? (0.85 - progress * 5).toFixed(2) : '0.15';
     }
 
-    // "Scroll to explore" only at the very top of the page
     if (scrollHint) {
-      scrollHint.classList.toggle('hidden', !atTop || progress > 0.08);
+      if (progress <= 0.03) {
+        scrollHint.style.opacity = (1 - progress / 0.03).toFixed(3);
+        scrollHint.style.visibility = 'visible';
+      } else {
+        scrollHint.style.opacity = '0';
+        scrollHint.style.visibility = 'hidden';
+      }
     }
 
     if (petalContainer) {
-      petalContainer.classList.toggle('hero__petals--hidden', !atTop || progress > 0.08);
+      petalContainer.style.opacity = progress < 0.06 ? '1' : '0';
     }
   }
-
-  window.addEventListener('resize', resizeCanvas);
-
-  // ---------- Finish Loading ----------
-  function finishLoading() {
-    if (!loader) return;
-    setTimeout(function () {
-      loader.classList.add('loaded');
-      document.body.classList.remove('loading');
-      setTimeout(function () {
-        loader.style.display = 'none';
-      }, 900);
-    }, 400);
-  }
-
-  setTimeout(function () {
-    if (!framesReady) {
-      finishLoading();
-    }
-  }, 4000);
-
-  // ---------- Scroll Progress Bar ----------
-  var scrollProgress = document.getElementById('scrollProgress');
 
   function updateScrollProgress() {
     if (!scrollProgress) return;
-    var scrollTop = window.scrollY;
-    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    var progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-    scrollProgress.style.width = progress + '%';
+    var progress = Math.min(Math.max(window.scrollY / docHeight, 0), 1);
+    scrollProgress.style.transform = 'scaleX(' + progress.toFixed(4) + ')';
   }
-
-  // ---------- Parallax Scrolling ----------
-  var parallaxBgs = document.querySelectorAll('.parallax-bg');
 
   function updateParallax() {
+    if (!parallaxData.length) return;
     var scrollY = window.scrollY;
-    var vh = window.innerHeight;
-
-    parallaxBgs.forEach(function (bg) {
-      var section = bg.closest('.quote-section') || bg.parentElement;
-      if (!section) return;
-
-      var rect = section.getBoundingClientRect();
-      if (rect.bottom > 0 && rect.top < vh) {
-        var centerOffset = (rect.top + rect.height / 2) - vh / 2;
-        var speed = 0.25;
-        var translateY = centerOffset * speed;
-        bg.style.transform = 'translate3d(0, ' + translateY + 'px, 0)';
+    for (var i = 0; i < parallaxData.length; i++) {
+      var p = parallaxData[i];
+      var relY = scrollY + winH - p.top;
+      if (relY > 0 && relY < p.height + winH) {
+        var centerOffset = (p.top + p.height * 0.5) - (scrollY + winH * 0.5);
+        var translateY = centerOffset * 0.22;
+        p.bg.style.transform = 'translate3d(0, ' + translateY.toFixed(1) + 'px, 0)';
       }
-    });
+    }
   }
 
-  // ---------- Timeline Line Fill ----------
-  var storyTimeline = document.querySelector('.story__timeline');
   var storyLineFill = document.querySelector('.story__line-fill');
-
   function updateTimeline() {
-    if (!storyTimeline || !storyLineFill) return;
-
-    var rect = storyTimeline.getBoundingClientRect();
-    var vh = window.innerHeight;
-    var start = vh * 0.7;
-    var totalHeight = rect.height;
-
-    if (rect.top < start) {
-      var scrolled = start - rect.top;
-      var pct = Math.min(Math.max(scrolled / totalHeight, 0), 1) * 100;
-      storyLineFill.style.height = pct + '%';
+    if (!storyLineFill || storyTimelineHeight <= 1) return;
+    var scrollY = window.scrollY;
+    var start = scrollY + winH * 0.7;
+    if (start > storyTimelineTop) {
+      var pct = Math.min(Math.max((start - storyTimelineTop) / storyTimelineHeight, 0), 1) * 100;
+      storyLineFill.style.height = pct.toFixed(1) + '%';
     } else {
       storyLineFill.style.height = '0%';
     }
   }
 
-  // ---------- Unified Scroll Handler (rAF Throttled) ----------
-  var ticking = false;
-
+  // Single rAF-throttled scroll listener with passive flag
+  var scrollTicking = false;
   function onScroll() {
-    if (!ticking) {
+    if (!scrollTicking) {
       requestAnimationFrame(function () {
         updateScrollVideo();
         updateScrollProgress();
         updateParallax();
         updateTimeline();
-        highlightNav();
-        ticking = false;
+        scrollTicking = false;
       });
-      ticking = true;
+      scrollTicking = true;
     }
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', measureLayout, { passive: true });
+  window.addEventListener('orientationchange', measureLayout, { passive: true });
 
   // ---------- Scroll Reveal (IntersectionObserver) ----------
   var revealElements = document.querySelectorAll('.reveal');
-
   if ('IntersectionObserver' in window) {
     var revealObserver = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (entry) {
           if (entry.isIntersecting) {
             var delay = entry.target.dataset.delay;
-            if (delay) {
-              entry.target.style.transitionDelay = delay + 's';
-            }
+            if (delay) entry.target.style.transitionDelay = delay + 's';
             entry.target.classList.add('visible');
             revealObserver.unobserve(entry.target);
           }
         });
       },
-      {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px',
-      }
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
     );
-
-    revealElements.forEach(function (el) {
-      revealObserver.observe(el);
-    });
+    revealElements.forEach(function (el) { revealObserver.observe(el); });
   } else {
-    revealElements.forEach(function (el) {
-      el.classList.add('visible');
-    });
+    revealElements.forEach(function (el) { el.classList.add('visible'); });
   }
 
-  // ---------- Tilt Card Effect (Desktop) ----------
-  var tiltCards = document.querySelectorAll('.tilt-card');
+  // ---------- Tilt Card Effect (Desktop with Hover Only) ----------
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    var tiltCards = document.querySelectorAll('.tilt-card');
+    tiltCards.forEach(function (card) {
+      card.addEventListener('mousemove', function (e) {
+        var rect = card.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+        var centerX = rect.width * 0.5;
+        var centerY = rect.height * 0.5;
+        var rotateX = ((y - centerY) / centerY) * -5;
+        var rotateY = ((x - centerX) / centerX) * 5;
+        card.style.transform = 'perspective(1000px) rotateX(' + rotateX.toFixed(1) + 'deg) rotateY(' + rotateY.toFixed(1) + 'deg) translateY(-8px)';
+      }, { passive: true });
 
-  tiltCards.forEach(function (card) {
-    card.addEventListener('mousemove', function (e) {
-      var rect = card.getBoundingClientRect();
-      var x = e.clientX - rect.left;
-      var y = e.clientY - rect.top;
-      var centerX = rect.width / 2;
-      var centerY = rect.height / 2;
-
-      var rotateX = ((y - centerY) / centerY) * -5;
-      var rotateY = ((x - centerX) / centerX) * 5;
-
-      card.style.transform =
-        'perspective(1000px) rotateX(' +
-        rotateX +
-        'deg) rotateY(' +
-        rotateY +
-        'deg) translateY(-8px)';
+      card.addEventListener('mouseleave', function () {
+        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)';
+      }, { passive: true });
     });
-
-    card.addEventListener('mouseleave', function () {
-      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)';
-    });
-  });
+  }
 
   // ---------- Smooth Scroll for Anchor Links ----------
   document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
@@ -403,28 +406,6 @@
       }
     });
   });
-
-  // ---------- Active Section Navigation Highlight ----------
-  var sections = document.querySelectorAll('section[id]');
-  var navLinksList = document.querySelectorAll('.nav__links a');
-
-  function highlightNav() {
-    if (!navLinksList.length) return;
-    var scrollPos = window.scrollY + 140;
-    sections.forEach(function (section) {
-      var top = section.offsetTop;
-      var height = section.offsetHeight;
-      var id = section.getAttribute('id');
-      if (scrollPos >= top && scrollPos < top + height) {
-        navLinksList.forEach(function (link) {
-          link.style.opacity = '0.6';
-          if (link.getAttribute('href') === '#' + id) {
-            link.style.opacity = '1';
-          }
-        });
-      }
-    });
-  }
 
   // ============================================================
   // WORLD-CLASS BESPOKE LUXURY ENHANCEMENTS
@@ -469,21 +450,21 @@
         isHovered = true;
         ring.classList.add('cursor-ring--hover');
       }
-    });
+    }, { passive: true });
 
     document.addEventListener('mouseout', function (e) {
       if (e.target.closest(interactiveSelectors)) {
         isHovered = false;
         ring.classList.remove('cursor-ring--hover');
       }
-    });
+    }, { passive: true });
 
     document.addEventListener('mousedown', function () {
       dot.style.transform += ' scale(0.6)';
-    });
+    }, { passive: true });
     document.addEventListener('mouseup', function () {
       dot.style.transform = 'translate3d(' + mouseX + 'px, ' + mouseY + 'px, 0) translate(-50%, -50%)';
-    });
+    }, { passive: true });
   }
 
   // ---------- 2. Celebration Live Countdown Timer ----------
@@ -494,7 +475,6 @@
     var countSeconds = document.getElementById('countSeconds');
     if (!countDays) return;
 
-    // Wedding ceremony date: November 11, 2026, 10:00 AM Athens Time (GMT+2)
     var weddingDate = new Date('2026-11-11T10:00:00+02:00').getTime();
 
     function update() {
@@ -542,7 +522,6 @@
         var AudioCtx = window.AudioContext || window.webkitAudioContext;
         if (!AudioCtx) return;
         webAudioCtx = new AudioCtx();
-        // Romantic harp arpeggio tones
         var notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99];
         var noteIdx = 0;
         synthInterval = setInterval(function () {
@@ -667,7 +646,7 @@
     if (lightboxNext) lightboxNext.addEventListener('click', showNext);
 
     lightbox.addEventListener('click', function (e) {
-      if (e.target === lightbox || e.target.classList.contains('lightbox__dialog')) {
+      if (e.target === lightbox || e.target.classList.contains('lightbox__backdrop')) {
         closeLightbox();
       }
     });
@@ -724,19 +703,19 @@
 
   // ---------- 6. Celebratory Confetti Burst ----------
   function triggerConfetti() {
-    var canvas = document.getElementById('confettiCanvas');
-    if (!canvas) return;
-    var ctx = canvas.getContext('2d');
-    var w = canvas.width = window.innerWidth;
-    var h = canvas.height = window.innerHeight;
+    var cvs = document.getElementById('confettiCanvas');
+    if (!cvs) return;
+    var ctx = cvs.getContext('2d');
+    var w = cvs.width = window.innerWidth;
+    var h = cvs.height = window.innerHeight;
 
     var colors = ['#C5A059', '#D4A69A', '#8B3A4A', '#F5DCA3', '#FFFDF9', '#722F37'];
     var particles = [];
-    var count = 140;
+    var count = 120;
 
     for (var i = 0; i < count; i++) {
       particles.push({
-        x: w / 2 + (Math.random() - 0.5) * 220,
+        x: w * 0.5 + (Math.random() - 0.5) * 220,
         y: h * 0.72,
         vx: (Math.random() - 0.5) * 14,
         vy: -Math.random() * 18 - 8,
@@ -749,7 +728,7 @@
       });
     }
 
-    var animationFrame;
+    var animId;
     function render() {
       ctx.clearRect(0, 0, w, h);
       var active = false;
@@ -775,10 +754,10 @@
       });
 
       if (active) {
-        animationFrame = requestAnimationFrame(render);
+        animId = requestAnimationFrame(render);
       } else {
         ctx.clearRect(0, 0, w, h);
-        cancelAnimationFrame(animationFrame);
+        cancelAnimationFrame(animId);
       }
     }
 
@@ -792,6 +771,26 @@
   if (rsvpForm) {
     rsvpForm.addEventListener('submit', function (e) {
       e.preventDefault();
+
+      // Background submission for Netlify / Formspree / Static form processors
+      try {
+        var formData = new FormData(rsvpForm);
+        fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(formData).toString()
+        }).catch(function () {});
+      } catch (err) {}
+
+      // Cache guest response locally
+      try {
+        var nameField = rsvpForm.querySelector('#name');
+        localStorage.setItem('ak_wedding_rsvp', JSON.stringify({
+          name: nameField ? nameField.value : '',
+          timestamp: new Date().toISOString()
+        }));
+      } catch (e) {}
+
       rsvpForm.classList.add('hidden');
       if (rsvpSuccess) {
         rsvpSuccess.classList.add('active');
@@ -801,19 +800,18 @@
     });
   }
 
-  // ---------- Init All Modules ----------
-  window.addEventListener('load', function () {
-    initScrollVideo();
-    updateScrollVideo();
-  });
-
-  updateScrollVideo();
-
+  // ---------- Fast Init Sequence ----------
+  measureLayout();
+  initScrollVideo();
   initCustomCursor();
   initCountdown();
   initAudioToggle();
   initGalleryLightbox();
   initCalendarButtons();
-  updateScrollProgress();
+
+  window.addEventListener('load', function () {
+    measureLayout();
+    updateScrollVideo();
+  }, { passive: true });
 
 })();

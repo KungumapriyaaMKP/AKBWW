@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5DCA3"/>
+      <stop offset="50%" stop-color="#C5A059"/>
+      <stop offset="100%" stop-color="#F5DCA3"/>
+    </linearGradient>
+    <radialGradient id="burgundy" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#6F2B3E"/>
+      <stop offset="100%" stop-color="#3A1420"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#burgundy)"/>
+  <circle cx="32" cy="32" r="28" fill="none" stroke="url(#gold)" stroke-width="1.2" stroke-dasharray="2 2"/>
+  <path d="M32 9 L34 15 L40 15 L35 19 L37 25 L32 21 L27 25 L29 19 L24 15 L30 15 Z" fill="url(#gold)" opacity="0.9"/>
+  <text x="32" y="44" font-family="'Cinzel', Georgia, serif" font-size="14" font-weight="700" fill="#FFFDF9" text-anchor="middle" letter-spacing="1">A·K</text>
+  <circle cx="32" cy="53" r="1.5" fill="url(#gold)"/>
+</svg>

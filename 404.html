@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Moment Away | Anirudh &amp; Kavya</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="alternate icon" type="image/x-icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #1A0A10;
+      color: #FFFDF9;
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .backdrop {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(92, 36, 52, 0.45) 0%, rgba(26, 10, 16, 0.95) 70%);
+      z-index: 0;
+    }
+    .content {
+      position: relative;
+      z-index: 1;
+      max-width: 540px;
+    }
+    .crest {
+      margin-bottom: 24px;
+      filter: drop-shadow(0 0 16px rgba(197, 160, 89, 0.4));
+    }
+    .num {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(3.5rem, 12vw, 6rem);
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      color: #F5DCA3;
+      line-height: 1;
+      margin-bottom: 12px;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+    .title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.6rem, 5vw, 2.2rem);
+      font-weight: 300;
+      font-style: italic;
+      color: #FFFDF9;
+      margin-bottom: 16px;
+    }
+    .desc {
+      font-size: 0.9rem;
+      font-weight: 300;
+      line-height: 1.7;
+      color: rgba(255, 253, 249, 0.7);
+      margin-bottom: 36px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 34px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: #1A0A10;
+      background: linear-gradient(135deg, #F5DCA3 0%, #C5A059 100%);
+      border-radius: 50px;
+      box-shadow: 0 8px 24px rgba(197, 160, 89, 0.35);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(197, 160, 89, 0.55);
+    }
+  </style>
+</head>
+<body>
+  <div class="backdrop" aria-hidden="true"></div>
+  <main class="content">
+    <div class="crest" aria-hidden="true">
+      <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
+        <circle cx="50" cy="50" r="44" stroke="#F5DCA3" stroke-width="1" stroke-dasharray="3 3"/>
+        <path d="M50 15 L53 25 L63 25 L55 31 L58 41 L50 35 L42 41 L45 31 L37 25 L47 25 Z" fill="#F5DCA3" opacity="0.8"/>
+        <text x="50" y="68" font-family="'Cinzel', serif" font-size="20" font-weight="600" fill="#FFFDF9" text-anchor="middle">A · K</text>
+      </svg>
+    </div>
+    <div class="num">404</div>
+    <h1 class="title">You seem to have wandered off the aisle</h1>
+    <p class="desc">The page you are looking for has been tucked away into memories. Let us guide you back to the celebration.</p>
+    <a href="index.html" class="btn">
+      <span>Return to Celebration</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </main>
+</body>
+</html>

@@ -2,13 +2,42 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>Anirudh &amp; Kavya | A Lifetime of Love</title>
-  <meta name="description" content="The official wedding celebration of Anirudh Ravichander and Kavya Maran — Athens, Greece & Chennai, India.">
+  <meta name="description" content="The official wedding celebration of Anirudh Ravichander and Kavya Maran — Athens, Greece &amp; Chennai, India.">
+  <meta name="author" content="Sumya Web Studio">
+  <meta name="theme-color" content="#5C2434">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="A·K Wedding">
+  <meta name="format-detection" content="telephone=no">
+
+  <!-- Favicon & Mobile Icons -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="alternate icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+
+  <!-- Open Graph / Facebook / WhatsApp -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Anirudh &amp; Kavya | The Wedding Celebration">
+  <meta property="og:description" content="The official wedding celebration of Anirudh Ravichander and Kavya Maran — Athens, Greece &amp; Chennai, India.">
+  <meta property="og:image" content="images/hero-landscape.jpg">
+  <meta property="og:site_name" content="Anirudh &amp; Kavya Wedding">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Anirudh &amp; Kavya | The Wedding Celebration">
+  <meta name="twitter:description" content="The official wedding celebration of Anirudh Ravichander and Kavya Maran — Athens, Greece &amp; Chennai, India.">
+  <meta name="twitter:image" content="images/hero-landscape.jpg">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <!-- Critical Resource Preload for Zero Latency -->
+  <link rel="preload" as="image" href="frames_opt/f0000.jpg" fetchpriority="high">
 </head>
 <body>
 
@@ -55,43 +84,45 @@
 
   <!-- Scroll-Driven Video Section -->
   <section class="scroll-video" id="home">
-    <canvas class="scroll-video__canvas" id="scrollCanvas"></canvas>
-    <div class="scroll-video__overlay"></div>
-    <!-- Floating petals -->
-    <div class="hero__petals" aria-hidden="true">
-      <div class="petal petal--1"></div>
-      <div class="petal petal--2"></div>
-      <div class="petal petal--3"></div>
-      <div class="petal petal--4"></div>
-      <div class="petal petal--5"></div>
-      <div class="petal petal--6"></div>
-      <div class="sparkle sparkle--1"></div>
-      <div class="sparkle sparkle--2"></div>
-      <div class="sparkle sparkle--3"></div>
-    </div>
-    <div class="scroll-video__content" id="scrollContent">
-      <div class="hero__crest-icon" aria-hidden="true">
-        <svg width="44" height="44" viewBox="0 0 100 100" fill="none">
-          <circle cx="50" cy="50" r="44" stroke="#F5DCA3" stroke-width="1" stroke-dasharray="3 3"/>
-          <path d="M50 15 L53 25 L63 25 L55 31 L58 41 L50 35 L42 41 L45 31 L37 25 L47 25 Z" fill="#F5DCA3" opacity="0.8"/>
-          <text x="50" y="68" font-family="'Cinzel', serif" font-size="20" font-weight="600" fill="#FFFDF9" text-anchor="middle">A · K</text>
+    <div class="scroll-video__stage">
+      <canvas class="scroll-video__canvas" id="scrollCanvas"></canvas>
+      <div class="scroll-video__overlay"></div>
+      <!-- Floating petals -->
+      <div class="hero__petals" aria-hidden="true">
+        <div class="petal petal--1"></div>
+        <div class="petal petal--2"></div>
+        <div class="petal petal--3"></div>
+        <div class="petal petal--4"></div>
+        <div class="petal petal--5"></div>
+        <div class="petal petal--6"></div>
+        <div class="sparkle sparkle--1"></div>
+        <div class="sparkle sparkle--2"></div>
+        <div class="sparkle sparkle--3"></div>
+      </div>
+      <div class="scroll-video__content" id="scrollContent">
+        <div class="hero__crest-icon" aria-hidden="true">
+          <svg width="44" height="44" viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="44" stroke="#F5DCA3" stroke-width="1" stroke-dasharray="3 3"/>
+            <path d="M50 15 L53 25 L63 25 L55 31 L58 41 L50 35 L42 41 L45 31 L37 25 L47 25 Z" fill="#F5DCA3" opacity="0.8"/>
+            <text x="50" y="68" font-family="'Cinzel', serif" font-size="20" font-weight="600" fill="#FFFDF9" text-anchor="middle">A · K</text>
+          </svg>
+        </div>
+        <p class="hero__subtitle split-text">The Wedding Celebration</p>
+        <h1 class="hero__title">
+          <span class="title-word" style="--i:0">Anirudh</span>
+          <span class="hero__ampersand title-word" style="--i:1">&amp;</span>
+          <span class="title-word" style="--i:2">Kavya</span>
+        </h1>
+        <div class="hero__divider"></div>
+        <p class="hero__date split-text">November 11, 2026</p>
+      </div>
+      <!-- Scroll hint at the very bottom -->
+      <div class="scroll-video__hint" id="scrollHint">
+        <p>Scroll to Explore</p>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
         </svg>
       </div>
-      <p class="hero__subtitle split-text">The Wedding Celebration</p>
-      <h1 class="hero__title">
-        <span class="title-word" style="--i:0">Anirudh</span>
-        <span class="hero__ampersand title-word" style="--i:1">&amp;</span>
-        <span class="title-word" style="--i:2">Kavya</span>
-      </h1>
-      <div class="hero__divider"></div>
-      <p class="hero__date split-text">November 11, 2026</p>
-    </div>
-    <!-- Scroll hint at the very bottom -->
-    <div class="scroll-video__hint" id="scrollHint">
-      <p>Scroll to Explore</p>
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-        <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
-      </svg>
     </div>
   </section>
 
@@ -495,7 +526,9 @@
       <p class="section-label reveal reveal--fade">Be Our Guest</p>
       <h2 class="section-title reveal reveal--slide-up">R. S. V. P.</h2>
       <p class="rsvp__subtitle reveal reveal--fade" data-delay="0.15">Kindly respond by November 5, 2026 to grace our celebrations</p>
-      <form class="rsvp__form reveal reveal--slide-up" id="rsvpForm" data-delay="0.2">
+      <form class="rsvp__form reveal reveal--slide-up" id="rsvpForm" data-delay="0.2" name="rsvp" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="rsvp">
+        <p style="display:none;" aria-hidden="true"><label>Leave blank: <input name="bot-field"></label></p>
         <div class="rsvp__form-row">
           <div class="rsvp__field">
             <label for="name" class="rsvp__label">Full Name</label>
