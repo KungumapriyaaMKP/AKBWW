@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A &amp; K | Wedding</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Page Loader -->
+  <div class="loader" id="loader">
+    <div class="loader__inner">
+      <div class="loader__line"></div>
+      <p class="loader__text">A &amp; K</p>
+      <div class="loader__line"></div>
+    </div>
+  </div>
+
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+
+  <!-- Scroll-Driven Video Section -->
+  <section class="scroll-video" id="home">
+    <canvas class="scroll-video__canvas" id="scrollCanvas"></canvas>
+    <div class="scroll-video__overlay"></div>
+    <!-- Floating petals -->
+    <div class="hero__petals" aria-hidden="true">
+      <div class="petal petal--1"></div>
+      <div class="petal petal--2"></div>
+      <div class="petal petal--3"></div>
+      <div class="petal petal--4"></div>
+      <div class="petal petal--5"></div>
+      <div class="petal petal--6"></div>
+    </div>
+    <div class="scroll-video__content" id="scrollContent">
+      <p class="hero__subtitle split-text">The Wedding of</p>
+      <h1 class="hero__title">
+        <span class="title-word" style="--i:0">Anirudh</span>
+        <span class="hero__ampersand title-word" style="--i:1">&amp;</span>
+        <span class="title-word" style="--i:2">Kavya</span>
+      </h1>
+      <div class="hero__divider"></div>
+      <p class="hero__date split-text">December 14, 2026</p>
+    </div>
+    <!-- Scroll hint at the very bottom -->
+    <div class="scroll-video__hint" id="scrollHint">
+      <p>Scroll to explore</p>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Hero Image (after scroll video) -->
+  <section class="hero-static" id="heroStatic">
+    <div class="hero-static__bg parallax-bg" data-speed="0.3">
+      <img src="images/hero-couple.webp" alt="Anirudh and Kavya" loading="lazy">
+    </div>
+    <div class="hero-static__overlay"></div>
+    <div class="hero-static__content reveal reveal--fade">
+      <p class="hero-static__quote">"My once in a lifetime, for a lifetime."</p>
+      <span class="hero-static__date">11.11</span>
+    </div>
+  </section>
+
+  <!-- Intro Section -->
+  <section class="intro" id="intro">
+    <div class="container">
+      <div class="intro__content">
+        <p class="section-label reveal reveal--fade">Together with their families</p>
+        <h2 class="intro__heading reveal reveal--slide-up">Two souls, one beautiful journey</h2>
+        <p class="intro__text reveal reveal--slide-up" data-delay="0.15">
+          We are overjoyed to share this chapter of our lives with you.
+          What began as a simple conversation has blossomed into a love story
+          we never want to end. We invite you to celebrate the beginning
+          of our forever.
+        </p>
+        <div class="intro__ornament reveal reveal--scale">
+          <svg width="120" height="20" viewBox="0 0 120 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 10 Q30 0 60 10 Q90 20 120 10" stroke="currentColor" stroke-width="1" fill="none"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Story Section -->
+  <section class="story" id="story">
+    <div class="container">
+      <p class="section-label reveal reveal--fade">How it all began</p>
+      <h2 class="section-title reveal reveal--slide-up">Our Story</h2>
+      <div class="story__timeline">
+        <div class="story__line-fill" id="storyLineFill"></div>
+        <div class="story__item story__item--left reveal reveal--slide-right">
+          <div class="story__card tilt-card">
+            <span class="story__year">The Meeting</span>
+            <h3 class="story__card-title">A Beautiful Beginning</h3>
+            <p class="story__card-text">
+              Some encounters are written in the stars. Ours was one of those rare moments
+              where everything simply fell into place, as if the universe had been
+              quietly arranging it all along.
+            </p>
+          </div>
+        </div>
+        <div class="story__item story__item--right reveal reveal--slide-left">
+          <div class="story__card tilt-card">
+            <span class="story__year">The Courtship</span>
+            <h3 class="story__card-title">Growing Together</h3>
+            <p class="story__card-text">
+              From long conversations under evening skies to spontaneous adventures,
+              every moment together deepened our bond. We discovered that love
+              is not just a feeling but a choice we make every single day.
+            </p>
+          </div>
+        </div>
+        <div class="story__item story__item--left reveal reveal--slide-right">
+          <div class="story__card tilt-card">
+            <span class="story__year">The Proposal</span>
+            <h3 class="story__card-title">The Question</h3>
+            <p class="story__card-text">
+              With the ocean as witness and the golden sun setting on the horizon,
+              one simple question changed everything. The answer was never in doubt,
+              and that moment became the most treasured of our lives.
+            </p>
+          </div>
+        </div>
+        <div class="story__item story__item--right reveal reveal--slide-left">
+          <div class="story__card tilt-card">
+            <span class="story__year">Forever</span>
+            <h3 class="story__card-title">The Wedding</h3>
+            <p class="story__card-text">
+              Now we embark on the most beautiful chapter yet. Surrounded by the people
+              we cherish, we will promise each other a lifetime of love, laughter,
+              and endless adventure.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Image Break -->
+  <section class="image-break">
+    <div class="image-break__wrapper parallax-bg" data-speed="0.3">
+      <img src="images/couple-walk.webp" alt="Anirudh and Kavya walking through flower petals" loading="lazy">
+    </div>
+    <div class="image-break__overlay"></div>
+    <div class="image-break__text reveal reveal--scale">
+      <p>Forever begins here</p>
+    </div>
+  </section>
+
+  <!-- Gallery Section -->
+  <section class="gallery" id="gallery">
+    <div class="container">
+      <p class="section-label reveal reveal--fade">Captured Moments</p>
+      <h2 class="section-title reveal reveal--slide-up">Gallery</h2>
+      <div class="gallery__grid">
+        <div class="gallery__item reveal reveal--zoom" data-delay="0">
+          <img src="images/hero-couple.webp" alt="Couple under floral arch" loading="lazy">
+          <div class="gallery__item-overlay"><span>The Ceremony</span></div>
+        </div>
+        <div class="gallery__item reveal reveal--zoom" data-delay="0.1">
+          <img src="images/couple-boho.jpg" alt="Couple in bohemian outfits" loading="lazy">
+          <div class="gallery__item-overlay"><span>Pre-Wedding</span></div>
+        </div>
+        <div class="gallery__item reveal reveal--zoom" data-delay="0.2">
+          <img src="images/groom-aisle.jpg" alt="Groom walking down the aisle" loading="lazy">
+          <div class="gallery__item-overlay"><span>The Groom</span></div>
+        </div>
+        <div class="gallery__item reveal reveal--zoom" data-delay="0.1">
+          <img src="images/couple-walk.webp" alt="Couple walking joyfully" loading="lazy">
+          <div class="gallery__item-overlay"><span>Together</span></div>
+        </div>
+        <div class="gallery__item reveal reveal--zoom" data-delay="0.2">
+          <img src="images/couple-bw.jpg" alt="Artistic black and white portrait" loading="lazy">
+          <div class="gallery__item-overlay"><span>Candid</span></div>
+        </div>
+        <div class="gallery__item reveal reveal--zoom" data-delay="0.3">
+          <img src="images/couple-ceremony.avif" alt="Wedding ceremony moment" loading="lazy">
+          <div class="gallery__item-overlay"><span>Celebration</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Events Section -->
+  <section class="events" id="events">
+    <div class="container">
+      <p class="section-label reveal reveal--fade">Join the Celebration</p>
+      <h2 class="section-title reveal reveal--slide-up">Wedding Events</h2>
+      <div class="events__grid">
+        <div class="events__card reveal reveal--slide-up tilt-card" data-delay="0">
+          <div class="events__icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+              <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+            </svg>
+          </div>
+          <h3 class="events__card-title">Mehendi Ceremony</h3>
+          <p class="events__card-detail">December 12, 2026</p>
+          <p class="events__card-detail">4:00 PM onwards</p>
+          <p class="events__card-detail">The Garden Pavilion</p>
+          <p class="events__card-text">An evening of colours, music, and celebration as we adorn the bride with intricate henna patterns.</p>
+        </div>
+        <div class="events__card events__card--featured reveal reveal--slide-up tilt-card" data-delay="0.15">
+          <div class="events__icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </div>
+          <h3 class="events__card-title">The Wedding</h3>
+          <p class="events__card-detail">December 14, 2026</p>
+          <p class="events__card-detail">11:00 AM</p>
+          <p class="events__card-detail">Oceanfront Terrace</p>
+          <p class="events__card-text">The sacred ceremony where two hearts unite, overlooking the endless expanse of the ocean.</p>
+        </div>
+        <div class="events__card reveal reveal--slide-up tilt-card" data-delay="0.3">
+          <div class="events__icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+              <path d="M9 18l6-6-6-6"/><path d="M4 12a8 8 0 1 1 16 0 8 8 0 0 1-16 0z"/>
+            </svg>
+          </div>
+          <h3 class="events__card-title">Reception</h3>
+          <p class="events__card-detail">December 14, 2026</p>
+          <p class="events__card-detail">7:00 PM onwards</p>
+          <p class="events__card-detail">The Grand Ballroom</p>
+          <p class="events__card-text">An elegant evening of dinner, dancing, and joyful revelry as we celebrate the newlyweds.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Parallax Quote -->
+  <section class="quote-section">
+    <div class="quote-section__bg parallax-bg" data-speed="0.35">
+      <img src="images/couple-bw.jpg" alt="" loading="lazy" aria-hidden="true">
+    </div>
+    <div class="quote-section__overlay"></div>
+    <div class="quote-section__content">
+      <blockquote class="quote-section__text reveal reveal--fade">"Whatever our souls are made of, his and mine are the same."</blockquote>
+      <cite class="quote-section__cite reveal reveal--slide-up" data-delay="0.2">Emily Bronte</cite>
+    </div>
+  </section>
+
+  <!-- RSVP Section -->
+  <section class="rsvp" id="rsvp">
+    <div class="container">
+      <p class="section-label reveal reveal--fade">Be Our Guest</p>
+      <h2 class="section-title reveal reveal--slide-up">RSVP</h2>
+      <p class="rsvp__subtitle reveal reveal--fade" data-delay="0.15">Kindly respond by November 30, 2026</p>
+      <form class="rsvp__form reveal reveal--slide-up" id="rsvpForm" data-delay="0.2">
+        <div class="rsvp__form-row">
+          <div class="rsvp__field">
+            <label for="name" class="rsvp__label">Full Name</label>
+            <input type="text" id="name" name="name" class="rsvp__input" required placeholder="Your full name">
+          </div>
+          <div class="rsvp__field">
+            <label for="email" class="rsvp__label">Email Address</label>
+            <input type="email" id="email" name="email" class="rsvp__input" required placeholder="your@email.com">
+          </div>
+        </div>
+        <div class="rsvp__form-row">
+          <div class="rsvp__field">
+            <label for="guests" class="rsvp__label">Number of Guests</label>
+            <select id="guests" name="guests" class="rsvp__input rsvp__select">
+              <option value="1">1 Guest</option><option value="2">2 Guests</option>
+              <option value="3">3 Guests</option><option value="4">4 Guests</option>
+            </select>
+          </div>
+          <div class="rsvp__field">
+            <label for="attendance" class="rsvp__label">Will You Attend?</label>
+            <select id="attendance" name="attendance" class="rsvp__input rsvp__select">
+              <option value="yes">Joyfully Accept</option><option value="no">Respectfully Decline</option>
+            </select>
+          </div>
+        </div>
+        <div class="rsvp__field rsvp__field--full">
+          <label for="message" class="rsvp__label">Message for the Couple</label>
+          <textarea id="message" name="message" class="rsvp__input rsvp__textarea" rows="4" placeholder="Share your warm wishes..."></textarea>
+        </div>
+        <button type="submit" class="rsvp__button magnetic-btn">
+          <span class="rsvp__button-text">Send RSVP</span>
+          <span class="rsvp__button-shine"></span>
+        </button>
+      </form>
+      <div class="rsvp__success" id="rsvpSuccess">
+        <div class="rsvp__success-check">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="#5C2434" stroke-width="2">
+            <circle cx="24" cy="24" r="22" class="check-circle"/>
+            <path d="M14 24l7 7 13-13" class="check-mark"/>
+          </svg>
+        </div>
+        <p>Thank you for your response. We look forward to celebrating with you.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__content">
+        <h2 class="footer__names">Anirudh &amp; Kavya</h2>
+        <p class="footer__date">December 14, 2026</p>
+        <div class="footer__divider"></div>
+        <p class="footer__text">Made with love</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Frame count injected at build time - will be set by the extraction script
+    window.SCROLL_FRAME_COUNT = 0; // Will be auto-detected from frames_opt folder
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>
