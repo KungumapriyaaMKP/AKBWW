@@ -141,7 +141,12 @@
 
   function frameLoop() {
     var delta = targetFramePos - smoothFramePos;
-    smoothFramePos += delta * 0.18;
+    var step = delta * 0.22;
+    // Cap step on rapid touch swipes so video scrubs smoothly without jumping past
+    if (Math.abs(step) > 7) {
+      step = step > 0 ? 7 : -7;
+    }
+    smoothFramePos += step;
     if (Math.abs(delta) < 0.04) smoothFramePos = targetFramePos;
 
     var idx = nearestLoadedFrame(Math.round(smoothFramePos));
@@ -386,9 +391,14 @@
           }
         });
       },
-      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+      { threshold: 0, rootMargin: '120px 0px 120px 0px' }
     );
     revealElements.forEach(function (el) { revealObserver.observe(el); });
+
+    // On mobile touch devices, reveal all elements immediately to prevent any blank spots
+    if ('ontouchstart' in window || navigator.maxTouchPoints > 0 || window.innerWidth <= 768) {
+      revealElements.forEach(function (el) { el.classList.add('visible'); });
+    }
   } else {
     revealElements.forEach(function (el) { el.classList.add('visible'); });
   }

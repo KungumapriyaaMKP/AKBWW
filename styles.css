@@ -32,7 +32,6 @@ body {
   color: #2C2C2C;
   background-color: #FFFDF9;
   line-height: 1.7;
-  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -390,6 +389,7 @@ a {
 }
 
 .scroll-video__stage {
+  position: -webkit-sticky;
   position: sticky;
   top: 0;
   left: 0;
@@ -398,6 +398,9 @@ a {
   height: 100dvh;
   overflow: hidden;
   pointer-events: none;
+  z-index: 2;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 .scroll-video__canvas {
@@ -2399,19 +2402,18 @@ a {
 @media (max-width: 768px) {
   html {
     font-size: 15px;
-    overflow-x: clip;
   }
 
   body {
-    overflow-x: clip;
     width: 100%;
   }
 
   .scroll-video {
-    height: 600vh; /* Smooth, natural touch scrolling through drone sequences 1 & 2 */
+    height: 500vh; /* Smooth, natural touch scrolling through drone sequences 1 & 2 */
   }
 
   .scroll-video__stage {
+    position: -webkit-sticky;
     position: sticky;
     top: 0;
     left: 0;
@@ -2420,8 +2422,21 @@ a {
     height: 100dvh;
     overflow: hidden;
     pointer-events: none;
+    z-index: 2;
     -webkit-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);
+  }
+
+  /* Mobile Content Visibility Failsafe - Guaranteed Zero Blank Space */
+  .reveal--fade,
+  .reveal--slide-up,
+  .reveal--slide-right,
+  .reveal--slide-left,
+  .reveal--zoom,
+  .reveal--scale {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: opacity 0.4s ease !important;
   }
 
   .container {
