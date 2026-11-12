@@ -313,7 +313,8 @@
       var relY = scrollY + winH - p.top;
       if (relY > 0 && relY < p.height + winH) {
         var centerOffset = (p.top + p.height * 0.5) - (scrollY + winH * 0.5);
-        var translateY = centerOffset * 0.22;
+        // Safe, damped parallax displacement so portraits never get clipped or cut off
+        var translateY = Math.max(-25, Math.min(25, centerOffset * 0.05));
         p.bg.style.transform = 'translate3d(0, ' + translateY.toFixed(1) + 'px, 0)';
       }
     }
