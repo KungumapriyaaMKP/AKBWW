@@ -943,42 +943,6 @@
   // Backwards-compatible alias for existing triggers
   var triggerConfetti = triggerPartyPoppers;
 
-  // ---------- 7. RSVP Form Submission ----------
-  var rsvpForm = document.getElementById('rsvpForm');
-  var rsvpSuccess = document.getElementById('rsvpSuccess');
-
-  if (rsvpForm) {
-    rsvpForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      // Background submission for Netlify / Formspree / Static form processors
-      try {
-        var formData = new FormData(rsvpForm);
-        fetch('/', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: new URLSearchParams(formData).toString()
-        }).catch(function () {});
-      } catch (err) {}
-
-      // Cache guest response locally
-      try {
-        var nameField = rsvpForm.querySelector('#name');
-        localStorage.setItem('ak_wedding_rsvp', JSON.stringify({
-          name: nameField ? nameField.value : '',
-          timestamp: new Date().toISOString()
-        }));
-      } catch (e) {}
-
-      rsvpForm.classList.add('hidden');
-      if (rsvpSuccess) {
-        rsvpSuccess.classList.add('active');
-        rsvpSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-      triggerConfetti();
-    });
-  }
-
   // ---------- Fast Init Sequence ----------
   measureLayout();
   initScrollVideo();
