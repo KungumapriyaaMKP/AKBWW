@@ -431,6 +431,7 @@
         updateScrollProgress();
         updateParallax();
         updateTimeline();
+        if (window.checkCountdownScrollPop) window.checkCountdownScrollPop();
         scrollTicking = false;
       });
       scrollTicking = true;
@@ -624,8 +625,6 @@
       popperBtn.addEventListener('click', function (e) {
         e.stopPropagation();
         triggerPartyPoppers();
-        popperBtn.classList.add('popped');
-        setTimeout(function () { popperBtn.classList.remove('popped'); }, 500);
       });
     }
 
@@ -635,22 +634,72 @@
       });
     }
 
-    // Auto-fire party poppers when Countdown card scrolls into view
+    // Auto-fire party poppers when Countdown section scrolls into view
     var countdownSection = document.getElementById('countdown');
-    if (countdownSection && 'IntersectionObserver' in window) {
-      var popperTriggered = false;
+    var popperFired = false;
+    var popperCooldown = false;
+    var popperTimer = null;
+
+    function triggerScrollCelebration() {
+      if (popperFired || popperCooldown) return;
+      popperFired = true;
+      popperCooldown = true;
+
+      if (popperTimer) clearTimeout(popperTimer);
+      popperTimer = setTimeout(function () {
+        triggerPartyPoppers();
+      }, 100);
+
+      // Re-arm after user scrolls away and returns (2.5s debounce)
+      setTimeout(function () {
+        popperCooldown = false;
+      }, 2500);
+    }
+
+    // 1. IntersectionObserver: fires snappily when card enters viewport
+    if ('IntersectionObserver' in window && (countdownCard || countdownSection)) {
+      var obsTarget = countdownCard || countdownSection;
       var obs = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
-          if (entry.isIntersecting && !popperTriggered) {
-            popperTriggered = true;
-            setTimeout(function () {
-              triggerPartyPoppers();
-            }, 400);
+          if (entry.isIntersecting) {
+            triggerScrollCelebration();
+          } else {
+            // When user scrolls completely out of section, allow re-arming
+            if (!popperCooldown) {
+              popperFired = false;
+            }
           }
         });
-      }, { threshold: 0.3 });
-      obs.observe(countdownSection);
+      }, {
+        threshold: 0.12,
+        rootMargin: '0px 0px -40px 0px'
+      });
+      obs.observe(obsTarget);
+      if (countdownSection && countdownSection !== obsTarget) {
+        obs.observe(countdownSection);
+      }
     }
+
+    // 2. High-precision scroll loop check (guaranteed fallback for all browsers)
+    window.checkCountdownScrollPop = function () {
+      var target = countdownCard || countdownSection;
+      if (!target) return;
+      var rect = target.getBoundingClientRect();
+      var vh = window.innerHeight || document.documentElement.clientHeight;
+
+      if (popperFired || popperCooldown) {
+        // If user scrolled far away (>200px above or below), re-arm trigger
+        if (rect.bottom < -200 || rect.top > vh + 200) {
+          if (!popperCooldown) popperFired = false;
+        }
+        return;
+      }
+
+      // Fires when card enters bottom 85% of screen and hasn't left top 15%
+      if (rect.top < vh * 0.85 && rect.bottom > vh * 0.15) {
+        triggerScrollCelebration();
+      }
+    };
   }
 
   // ---------- 3. Background Wedding Music & Audio Atmosphere ----------
@@ -905,18 +954,46 @@
 
     playPopperSound();
 
+    // Trigger visual card celebration aura & button tactile press
+    var cardEl = document.getElementById('countdownCard');
+    if (cardEl) {
+      cardEl.classList.remove('celebrating');
+      void cardEl.offsetWidth; // trigger reflow for clean re-trigger
+      cardEl.classList.add('celebrating');
+      setTimeout(function () {
+        cardEl.classList.remove('celebrating');
+      }, 1700);
+    }
+    var popperBtnEl = document.getElementById('countdownPopperBtn');
+    if (popperBtnEl) {
+      popperBtnEl.classList.add('popped');
+      setTimeout(function () {
+        popperBtnEl.classList.remove('popped');
+      }, 800);
+    }
+
     var colors = [
       '#F5DCA3', '#C5A059', '#E6C587', '#D4A69A', 
       '#8B3A4A', '#FFFDF9', '#E5A93C', '#B8860B', '#FFD1DC'
     ];
     var types = ['strip', 'star', 'petal', 'dot'];
 
-    // Left cannon, right cannon, and center fountain
+    // Screen-wide cannons (bottom left, bottom right, bottom center)
     var cannons = [
-      { x: w * 0.15, y: h * 0.82, angle: -55, spread: 40, count: 70 },
-      { x: w * 0.85, y: h * 0.82, angle: -125, spread: 40, count: 70 },
-      { x: w * 0.50, y: h * 0.78, angle: -90, spread: 65, count: 60 }
+      { x: w * 0.12, y: h * 0.88, angle: -50, spread: 35, count: 65 },
+      { x: w * 0.88, y: h * 0.88, angle: -130, spread: 35, count: 65 },
+      { x: w * 0.50, y: h * 0.80, angle: -90, spread: 60, count: 60 }
     ];
+
+    // If countdown card is in viewport, also burst celebratory petals from card sides!
+    if (cardEl) {
+      var cardRect = cardEl.getBoundingClientRect();
+      if (cardRect.top < h && cardRect.bottom > 0) {
+        var cardMidY = Math.max(60, Math.min(h - 60, (cardRect.top + cardRect.bottom) / 2));
+        cannons.push({ x: Math.max(20, cardRect.left + 15), y: cardMidY, angle: -55, spread: 45, count: 40 });
+        cannons.push({ x: Math.min(w - 20, cardRect.right - 15), y: cardMidY, angle: -125, spread: 45, count: 40 });
+      }
+    }
 
     cannons.forEach(function (c) {
       for (var i = 0; i < c.count; i++) {

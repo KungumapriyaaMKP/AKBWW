@@ -1748,8 +1748,6 @@ a {
   overflow: hidden;
   border-top: 1px solid rgba(245, 220, 163, 0.25);
   border-bottom: 1px solid rgba(245, 220, 163, 0.25);
-  content-visibility: auto;
-  contain-intrinsic-size: 1px 600px;
 }
 
 .countdown-section::before {
@@ -1774,6 +1772,28 @@ a {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), inset 0 0 30px rgba(245, 220, 163, 0.06);
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.6s ease, border-color 0.6s ease;
+}
+
+.countdown-card.celebrating {
+  animation: countdownCardPop 1.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes countdownCardPop {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), inset 0 0 30px rgba(245, 220, 163, 0.06);
+  }
+  25% {
+    transform: scale(1.025);
+    border-color: rgba(245, 220, 163, 0.95);
+    box-shadow: 0 25px 80px rgba(92, 36, 52, 0.5), 0 0 45px rgba(245, 220, 163, 0.4), inset 0 0 35px rgba(245, 220, 163, 0.25);
+  }
+  100% {
+    transform: scale(1);
+    border-color: rgba(245, 220, 163, 0.35);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), inset 0 0 30px rgba(245, 220, 163, 0.06);
+  }
 }
 
 .countdown-card__ornament {
@@ -1874,6 +1894,9 @@ a {
   letter-spacing: 0.22em;
   text-transform: uppercase;
   cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), inset 0 0 14px rgba(245, 220, 163, 0.18);
   transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
   position: relative;
