@@ -1907,22 +1907,19 @@ a {
   transform: translateY(1px) scale(0.96);
 }
 
-.countdown-popper-btn .popper-icon {
-  font-size: 1.15rem;
+.countdown-popper-btn .popper-icon-svg {
   display: inline-block;
-  animation: popperWiggle 2.2s ease-in-out infinite;
+  flex-shrink: 0;
+  vertical-align: middle;
+  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.countdown-popper-btn .popper-sparkle {
-  color: #F5DCA3;
-  font-size: 0.95rem;
+.countdown-popper-btn:hover .popper-icon-svg {
+  transform: rotate(45deg) scale(1.18);
 }
 
-@keyframes popperWiggle {
-  0%, 100% { transform: rotate(0deg) scale(1); }
-  25% { transform: rotate(-14deg) scale(1.18); }
-  50% { transform: rotate(12deg) scale(1.12); }
-  75% { transform: rotate(-8deg) scale(1.06); }
+.countdown-popper-btn .popper-icon-svg--small {
+  transition-delay: 0.04s;
 }
 
 /* ---------- Gallery Subtitle & Lightbox Card Enhancements ---------- */
