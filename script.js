@@ -115,7 +115,23 @@
     var scale = Math.max(cW / imgW, cH / imgH);
     var drawW = imgW * scale;
     var drawH = imgH * scale;
-    var offsetX = (cW - drawW) * 0.5;
+
+    // Intelligent Portrait Centering:
+    // Video 1 (frames 0..180) aisle is centered at x=0.50.
+    // Video 2 (frames 188..361) floral mandap arch is centered at x=0.585.
+    // In mobile portrait view (cW < cH), adjust focalX so both videos are perfectly centered!
+    var focalX = 0.50;
+    if (cW < cH) {
+      if (index >= 195) {
+        focalX = 0.585;
+      } else if (index >= 180) {
+        var t = (index - 180) / 15;
+        focalX = 0.50 + t * 0.085;
+      }
+    }
+
+    var offsetX = (cW * 0.5) - (drawW * focalX);
+    offsetX = Math.min(0, Math.max(cW - drawW, offsetX));
     var offsetY = (cH - drawH) * 0.5;
 
     ctx2d.clearRect(0, 0, cW, cH);
