@@ -284,19 +284,19 @@
       startFrameLoop();
     }
 
-    // Hero title floats gently up and dissolves smoothly as user begins scrolling,
-    // keeping the entire drone descent 100% unobstructed and cinematic
+    // Hero title & wedding celebration crest stays proudly visible throughout the entire first video
+    // (frames 0 to 187), and smoothly dissolves as the first video finishes and transitions into the second video
     if (scrollContent) {
-      if (progress <= 0.005) {
+      if (progress <= 0.46) {
         scrollContent.style.opacity = '1';
         scrollContent.style.transform = 'translate(-50%, -50%)';
         scrollContent.style.visibility = 'visible';
-      } else if (progress < 0.08) {
-        var fade = 1 - (progress - 0.005) / 0.075;
-        scrollContent.style.opacity = fade.toFixed(3);
+      } else if (progress < 0.52) {
+        var fade = 1 - (progress - 0.46) / 0.06;
+        scrollContent.style.opacity = Math.max(0, fade).toFixed(3);
         var translateY = -50 - ((1 - fade) * 15);
         scrollContent.style.transform = 'translate(-50%, ' + translateY.toFixed(2) + '%)';
-        scrollContent.style.visibility = 'visible';
+        scrollContent.style.visibility = fade > 0 ? 'visible' : 'hidden';
       } else {
         scrollContent.style.opacity = '0';
         scrollContent.style.visibility = 'hidden';
@@ -304,14 +304,26 @@
     }
 
     if (scrollOverlay) {
-      scrollOverlay.style.opacity = progress < 0.08 ? (0.85 - progress * 5).toFixed(2) : '0.15';
+      if (progress <= 0.46) {
+        scrollOverlay.style.opacity = '0.5';
+      } else if (progress < 0.52) {
+        var ovFade = 0.5 - ((progress - 0.46) / 0.06) * 0.35;
+        scrollOverlay.style.opacity = Math.max(0.15, ovFade).toFixed(2);
+      } else {
+        scrollOverlay.style.opacity = '0.15';
+      }
     }
 
     if (scrollHint) {
-      if (progress <= 0.03) {
+      if (progress <= 0.46) {
         scrollHint.style.display = 'block';
-        scrollHint.style.opacity = (1 - progress / 0.03).toFixed(3);
+        scrollHint.style.opacity = '1';
         scrollHint.style.visibility = 'visible';
+      } else if (progress < 0.52) {
+        var hintFade = 1 - (progress - 0.46) / 0.06;
+        scrollHint.style.display = 'block';
+        scrollHint.style.opacity = Math.max(0, hintFade).toFixed(3);
+        scrollHint.style.visibility = hintFade > 0 ? 'visible' : 'hidden';
       } else {
         scrollHint.style.display = 'none';
         scrollHint.style.opacity = '0';
@@ -320,7 +332,7 @@
     }
 
     if (petalContainer) {
-      petalContainer.style.opacity = progress < 0.06 ? '1' : '0';
+      petalContainer.style.opacity = progress < 0.48 ? '1' : '0';
     }
   }
 
