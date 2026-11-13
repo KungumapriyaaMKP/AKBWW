@@ -29,6 +29,7 @@
   var canvas = document.getElementById('scrollCanvas');
   var ctx2d = canvas ? canvas.getContext('2d') : null;
   var scrollSection = document.querySelector('.scroll-video');
+  var scrollStage = document.querySelector('.scroll-video__stage');
   var scrollContent = document.getElementById('scrollContent');
   var scrollOverlay = document.querySelector('.scroll-video__overlay');
   var scrollHint = document.getElementById('scrollHint');
@@ -90,8 +91,8 @@
   function resizeCanvas() {
     if (!canvas || !ctx2d) return;
     var rect = canvas.getBoundingClientRect();
-    canvasW = rect.width;
-    canvasH = rect.height;
+    canvasW = rect.width || window.innerWidth || 400;
+    canvasH = rect.height || window.innerHeight || 800;
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(canvasW * dpr);
     canvas.height = Math.round(canvasH * dpr);
@@ -274,6 +275,35 @@
     var scrollY = window.scrollY;
     var progress = (scrollY - scrollSectionTop) / scrollSectionHeight;
     progress = Math.max(0, Math.min(1, progress));
+
+    // Bulletproof iOS Safari Sticky Watchdog:
+    // If WebKit fails to stick .scroll-video__stage at top: 0, immediately lock it with fixed pin
+    if (scrollStage) {
+      if (scrollY >= scrollSectionTop && scrollY <= (scrollSectionTop + scrollSectionHeight)) {
+        var rect = scrollStage.getBoundingClientRect();
+        if (rect.top < -2 || rect.top > 2) {
+          scrollStage.style.position = 'fixed';
+          scrollStage.style.top = '0px';
+          scrollStage.style.left = '0px';
+          scrollStage.style.width = '100%';
+          scrollStage.style.height = '100vh';
+        }
+      } else if (scrollY > (scrollSectionTop + scrollSectionHeight)) {
+        if (scrollStage.style.position === 'fixed') {
+          scrollStage.style.position = 'absolute';
+          scrollStage.style.top = scrollSectionHeight + 'px';
+          scrollStage.style.left = '0px';
+        }
+      } else {
+        if (scrollStage.style.position === 'fixed' || scrollStage.style.position === 'absolute') {
+          scrollStage.style.position = '';
+          scrollStage.style.top = '';
+          scrollStage.style.left = '';
+          scrollStage.style.width = '';
+          scrollStage.style.height = '';
+        }
+      }
+    }
 
     var inSection = scrollY >= (scrollSectionTop - winH * 0.1) && scrollY <= (scrollSectionTop + scrollSectionHeight + winH * 0.1);
     var atTop = scrollY < (scrollSectionTop + winH * 0.08);
