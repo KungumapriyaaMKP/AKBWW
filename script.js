@@ -97,6 +97,8 @@
     canvas.width = Math.round(canvasW * dpr);
     canvas.height = Math.round(canvasH * dpr);
     ctx2d.scale(dpr, dpr);
+    ctx2d.imageSmoothingEnabled = true;
+    ctx2d.imageSmoothingQuality = 'high';
     if (currentFrame >= 0 && frameImages[currentFrame]) {
       drawFrame(currentFrame);
     }
@@ -139,16 +141,20 @@
     currentFrame = index;
   }
 
-  // Find nearest decoded frame so playback never stalls or stutters
+  // Find nearest decoded frame without looping whole array or jumping across videos
   function nearestLoadedFrame(idx) {
     if (frameImages[idx] && frameImages[idx].complete && frameImages[idx].naturalWidth) return idx;
-    for (var d = 1; d < totalFrames; d++) {
-      var fwd = idx + d;
+    var isV1 = idx < 188;
+    var minB = isV1 ? 0 : 188;
+    var maxB = isV1 ? 187 : totalFrames - 1;
+    var maxRadius = 24;
+    for (var d = 1; d <= maxRadius; d++) {
       var bwd = idx - d;
-      if (fwd < totalFrames && frameImages[fwd] && frameImages[fwd].complete && frameImages[fwd].naturalWidth) return fwd;
-      if (bwd >= 0 && frameImages[bwd] && frameImages[bwd].complete && frameImages[bwd].naturalWidth) return bwd;
+      if (bwd >= minB && frameImages[bwd] && frameImages[bwd].complete && frameImages[bwd].naturalWidth) return bwd;
+      var fwd = idx + d;
+      if (fwd <= maxB && frameImages[fwd] && frameImages[fwd].complete && frameImages[fwd].naturalWidth) return fwd;
     }
-    return -1;
+    return currentFrame >= 0 ? currentFrame : (frameImages[0] ? 0 : -1);
   }
 
   // Smooth frame interpolation using sub-pixel easing
@@ -158,16 +164,16 @@
 
   function frameLoop() {
     var delta = targetFramePos - smoothFramePos;
-    var step = delta * 0.22;
-    // Cap step on rapid touch swipes so video scrubs smoothly without jumping past
-    if (Math.abs(step) > 7) {
-      step = step > 0 ? 7 : -7;
-    }
-    smoothFramePos += step;
-    if (Math.abs(delta) < 0.04) smoothFramePos = targetFramePos;
+    // Fluid responsive sub-pixel easing:
+    // Glides gently on small adjustments, scales dynamically on fast swipes so playback never lags behind
+    var factor = Math.abs(delta) > 25 ? 0.38 : 0.24;
+    smoothFramePos += delta * factor;
+    if (Math.abs(delta) < 0.08) smoothFramePos = targetFramePos;
 
     var idx = nearestLoadedFrame(Math.round(smoothFramePos));
-    if (idx >= 0 && idx !== currentFrame) drawFrame(idx);
+    if (idx >= 0 && idx !== currentFrame) {
+      drawFrame(idx);
+    }
 
     if (smoothFramePos !== targetFramePos) {
       requestAnimationFrame(frameLoop);

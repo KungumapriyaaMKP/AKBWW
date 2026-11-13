@@ -942,6 +942,8 @@ a {
 .gallery {
   padding: 120px 0;
   background: #FFFDF9;
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 700px;
 }
 
 .gallery__grid {
@@ -1006,6 +1008,8 @@ a {
   padding: 140px 0;
   background: radial-gradient(ellipse at 50% 15%, #FAF7F4 0%, #F5F0EB 55%, #EDE7E0 100%);
   overflow: hidden;
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 700px;
 }
 
 .events::before {
@@ -1744,6 +1748,8 @@ a {
   overflow: hidden;
   border-top: 1px solid rgba(245, 220, 163, 0.25);
   border-bottom: 1px solid rgba(245, 220, 163, 0.25);
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 600px;
 }
 
 .countdown-section::before {
