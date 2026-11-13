@@ -88,17 +88,34 @@
     updateScrollProgress();
   }
 
-  function resizeCanvas() {
+  var lastAllocW = 0;
+  var lastAllocH = 0;
+
+  function resizeCanvas(force) {
     if (!canvas || !ctx2d) return;
     var rect = canvas.getBoundingClientRect();
-    canvasW = rect.width || window.innerWidth || 400;
-    canvasH = rect.height || window.innerHeight || 800;
+    var newW = Math.round(rect.width || window.innerWidth || 400);
+    var newH = Math.round(rect.height || window.innerHeight || 800);
+
+    canvasW = newW;
+    canvasH = newH;
+
+    // Guard against iOS Safari address-bar jitter:
+    // Only reallocate GPU canvas buffer on initial load, real resize, or rotation
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.round(canvasW * dpr);
-    canvas.height = Math.round(canvasH * dpr);
-    ctx2d.scale(dpr, dpr);
-    ctx2d.imageSmoothingEnabled = true;
-    ctx2d.imageSmoothingQuality = 'high';
+    var targetBufW = Math.round(newW * dpr);
+    var targetBufH = Math.round(newH * dpr);
+
+    if (force || Math.abs(targetBufW - lastAllocW) > 8 || Math.abs(targetBufH - lastAllocH) > 140) {
+      lastAllocW = targetBufW;
+      lastAllocH = targetBufH;
+      canvas.width = targetBufW;
+      canvas.height = targetBufH;
+      ctx2d.scale(dpr, dpr);
+      ctx2d.imageSmoothingEnabled = true;
+      ctx2d.imageSmoothingQuality = 'high';
+    }
+
     if (currentFrame >= 0 && frameImages[currentFrame]) {
       drawFrame(currentFrame);
     }
@@ -136,25 +153,24 @@
     offsetX = Math.min(0, Math.max(cW - drawW, offsetX));
     var offsetY = (cH - drawH) * 0.5;
 
-    ctx2d.clearRect(0, 0, cW, cH);
     ctx2d.drawImage(img, offsetX, offsetY, drawW, drawH);
     currentFrame = index;
   }
 
-  // Find nearest decoded frame without looping whole array or jumping across videos
+  // Find nearest decoded frame without getting stuck at video seams or slow network spots
   function nearestLoadedFrame(idx) {
+    if (idx < 0) idx = 0;
+    if (idx >= totalFrames) idx = totalFrames - 1;
     if (frameImages[idx] && frameImages[idx].complete && frameImages[idx].naturalWidth) return idx;
-    var isV1 = idx < 188;
-    var minB = isV1 ? 0 : 188;
-    var maxB = isV1 ? 187 : totalFrames - 1;
-    var maxRadius = 24;
-    for (var d = 1; d <= maxRadius; d++) {
+
+    // Search outward for the closest loaded frame across the entire timeline
+    for (var d = 1; d < totalFrames; d++) {
       var bwd = idx - d;
-      if (bwd >= minB && frameImages[bwd] && frameImages[bwd].complete && frameImages[bwd].naturalWidth) return bwd;
+      if (bwd >= 0 && frameImages[bwd] && frameImages[bwd].complete && frameImages[bwd].naturalWidth) return bwd;
       var fwd = idx + d;
-      if (fwd <= maxB && frameImages[fwd] && frameImages[fwd].complete && frameImages[fwd].naturalWidth) return fwd;
+      if (fwd < totalFrames && frameImages[fwd] && frameImages[fwd].complete && frameImages[fwd].naturalWidth) return fwd;
     }
-    return currentFrame >= 0 ? currentFrame : (frameImages[0] ? 0 : -1);
+    return currentFrame >= 0 ? currentFrame : 0;
   }
 
   // Smooth frame interpolation using sub-pixel easing
@@ -200,9 +216,12 @@
     function onReady() {
       frameImages[index] = img;
       if (onFirstReady) onFirstReady(img);
-      // Reactive re-draw: If the user is currently looking for this frame, draw immediately
-      if (Math.abs(Math.round(smoothFramePos) - index) <= 2) {
-        drawFrame(index);
+      // Reactive re-draw: If this newly arrived frame is the best loaded frame for the user's
+      // current scroll position, immediately draw it so playback never stays stuck or frozen!
+      var targetIdx = Math.round(smoothFramePos);
+      var bestIdx = nearestLoadedFrame(targetIdx);
+      if (bestIdx >= 0 && (bestIdx === index || bestIdx !== currentFrame)) {
+        drawFrame(bestIdx);
       }
     }
 
@@ -217,8 +236,9 @@
   function requestFrameWindow(centerIdx) {
     if (totalFrames <= 0) return;
     var center = Math.round(centerIdx);
-    var radius = 18;
-    for (var r = 0; r <= radius; r++) {
+    var radius = 24;
+    requestSingleFrame(center);
+    for (var r = 1; r <= radius; r++) {
       var fwd = center + r;
       if (fwd < totalFrames) requestSingleFrame(fwd);
       var bwd = center - r;
@@ -231,7 +251,7 @@
 
     // 1. Critical Head: Frame 0 (Preloaded in HTML header)
     requestSingleFrame(0, function () {
-      resizeCanvas();
+      resizeCanvas(true);
       drawFrame(0);
       finishLoading(); // Immediate zero-delay reveal!
     });
@@ -298,33 +318,13 @@
     var progress = (scrollY - scrollSectionTop) / scrollSectionHeight;
     progress = Math.max(0, Math.min(1, progress));
 
-    // Bulletproof iOS Safari Sticky Watchdog:
-    // If WebKit fails to stick .scroll-video__stage at top: 0, immediately lock it with fixed pin
-    if (scrollStage) {
-      if (scrollY >= scrollSectionTop && scrollY <= (scrollSectionTop + scrollSectionHeight)) {
-        var rect = scrollStage.getBoundingClientRect();
-        if (rect.top < -2 || rect.top > 2) {
-          scrollStage.style.position = 'fixed';
-          scrollStage.style.top = '0px';
-          scrollStage.style.left = '0px';
-          scrollStage.style.width = '100%';
-          scrollStage.style.height = '100vh';
-        }
-      } else if (scrollY > (scrollSectionTop + scrollSectionHeight)) {
-        if (scrollStage.style.position === 'fixed') {
-          scrollStage.style.position = 'absolute';
-          scrollStage.style.top = scrollSectionHeight + 'px';
-          scrollStage.style.left = '0px';
-        }
-      } else {
-        if (scrollStage.style.position === 'fixed' || scrollStage.style.position === 'absolute') {
-          scrollStage.style.position = '';
-          scrollStage.style.top = '';
-          scrollStage.style.left = '';
-          scrollStage.style.width = '';
-          scrollStage.style.height = '';
-        }
-      }
+    // Clean any lingering inline positioning so native CSS position: sticky performs at hardware 120fps
+    if (scrollStage && scrollStage.style.position) {
+      scrollStage.style.position = '';
+      scrollStage.style.top = '';
+      scrollStage.style.left = '';
+      scrollStage.style.width = '';
+      scrollStage.style.height = '';
     }
 
     var inSection = scrollY >= (scrollSectionTop - winH * 0.1) && scrollY <= (scrollSectionTop + scrollSectionHeight + winH * 0.1);

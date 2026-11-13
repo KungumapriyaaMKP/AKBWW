@@ -26,6 +26,13 @@ html {
   font-size: 16px;
 }
 
+/* Touch devices: disable smooth-scroll fighting with native touch momentum */
+@media (hover: none) and (pointer: coarse) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   font-family: 'Montserrat', sans-serif;
   font-weight: 300;
@@ -392,9 +399,12 @@ a {
   left: 0;
   width: 100%;
   height: 100vh;
-  height: 100dvh;
+  height: 100svh;
   pointer-events: none;
   z-index: 2;
+  overflow: hidden;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .scroll-video__canvas {
@@ -2455,9 +2465,12 @@ a {
     left: 0;
     width: 100%;
     height: 100vh;
-    height: 100dvh;
+    height: 100svh;
     pointer-events: none;
     z-index: 2;
+    overflow: hidden;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
 
   /* Mobile Content Visibility Failsafe - Guaranteed Zero Blank Space */
