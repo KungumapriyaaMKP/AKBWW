@@ -1010,7 +1010,7 @@ a {
 .events {
   position: relative;
   padding: 140px 0;
-  background: radial-gradient(ellipse at 50% 15%, #FAF5EE 0%, #F4EDE2 55%, #ECE2D5 100%);
+  background: radial-gradient(ellipse at 50% 15%, #FAF7F4 0%, #F5F0EB 55%, #EDE7E0 100%);
   overflow: hidden;
 }
 
@@ -2191,9 +2191,9 @@ a {
   position: relative;
   padding: 130px 0 120px;
   background:
-    radial-gradient(ellipse at 15% 20%, rgba(212, 166, 154, 0.14) 0%, transparent 55%),
-    radial-gradient(ellipse at 85% 80%, rgba(197, 160, 89, 0.12) 0%, transparent 55%),
-    #FFFDF9;
+    radial-gradient(ellipse at 15% 20%, rgba(212, 166, 154, 0.08) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 80%, rgba(197, 160, 89, 0.06) 0%, transparent 55%),
+    #FAF8F5;
   overflow: hidden;
 }
 
@@ -2252,7 +2252,6 @@ a {
   object-fit: cover;
   object-position: center 12%;
   border-radius: 206px 206px 3px 3px;
-  filter: saturate(1.05) contrast(1.03);
   transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
@@ -2266,7 +2265,7 @@ a {
 }
 
 .couple__card:hover .couple__frame img {
-  filter: saturate(1.12) contrast(1.05) brightness(1.03);
+  transform: scale(1.02);
 }
 
 .couple__role {
