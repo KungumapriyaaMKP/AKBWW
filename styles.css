@@ -942,8 +942,6 @@ a {
 .gallery {
   padding: 120px 0;
   background: #FFFDF9;
-  content-visibility: auto;
-  contain-intrinsic-size: 1px 700px;
 }
 
 .gallery__grid {
@@ -1008,8 +1006,6 @@ a {
   padding: 140px 0;
   background: radial-gradient(ellipse at 50% 15%, #FAF7F4 0%, #F5F0EB 55%, #EDE7E0 100%);
   overflow: hidden;
-  content-visibility: auto;
-  contain-intrinsic-size: 1px 700px;
 }
 
 .events::before {
@@ -1063,6 +1059,7 @@ a {
   box-shadow: 0 16px 45px rgba(92, 36, 52, 0.06), 0 2px 6px rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
+  height: 100%;
   overflow: hidden;
   transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1),
               box-shadow 0.45s cubic-bezier(0.23, 1, 0.32, 1),
@@ -1070,7 +1067,7 @@ a {
 }
 
 .events__card:hover {
-  transform: translateY(-10px);
+  transform: translateY(-8px);
   box-shadow: 0 25px 65px rgba(92, 36, 52, 0.15), 0 0 25px rgba(197, 160, 89, 0.2);
   border-color: rgba(197, 160, 89, 0.7);
 }
@@ -1079,13 +1076,12 @@ a {
 .events__card--featured {
   background: linear-gradient(180deg, #FFFDF9 0%, #FAF3EA 100%);
   border: 1.5px solid rgba(197, 160, 89, 0.65);
-  box-shadow: 0 22px 60px rgba(92, 36, 52, 0.12), 0 0 30px rgba(245, 220, 163, 0.25);
-  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(92, 36, 52, 0.1), 0 0 25px rgba(245, 220, 163, 0.2);
 }
 
 .events__card--featured:hover {
-  transform: translateY(-16px);
-  box-shadow: 0 30px 80px rgba(92, 36, 52, 0.2), 0 0 40px rgba(197, 160, 89, 0.4);
+  transform: translateY(-8px);
+  box-shadow: 0 28px 70px rgba(92, 36, 52, 0.18), 0 0 35px rgba(197, 160, 89, 0.35);
 }
 
 .events__card-ribbon {
@@ -1175,7 +1171,7 @@ a {
 
 /* Card Body */
 .events__card-body {
-  padding: 32px 28px 36px;
+  padding: 30px 24px 34px;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -1184,88 +1180,103 @@ a {
 }
 
 .events__card-crest {
-  margin: -8px auto 16px;
+  height: 44px;
+  margin: 0 auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   filter: drop-shadow(0 2px 8px rgba(197, 160, 89, 0.35));
   transition: transform 0.4s ease;
 }
 
 .events__card:hover .events__card-crest {
-  transform: scale(1.1) rotate(4deg);
+  transform: scale(1.08) rotate(3deg);
 }
 
 .events__card-title {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.85rem;
+  font-size: 1.8rem;
   font-weight: 600;
   color: #5C2434;
   letter-spacing: 0.02em;
   line-height: 1.2;
   margin-bottom: 4px;
+  min-height: 2.4em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .events__card-subtitle {
   font-family: 'Montserrat', sans-serif;
   font-size: 0.72rem;
   font-weight: 500;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: #8C6D2D;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+  min-height: 1.3em;
 }
 
 .events__card-divider {
-  width: 36px;
+  width: 40px;
   height: 1px;
   background: #C5A059;
-  margin: 0 auto 18px;
+  margin: 0 auto 16px;
   opacity: 0.7;
 }
 
-/* Meta Row */
+/* Meta Row: Equal height to lock the dress code on the same baseline across all columns */
 .events__meta-row {
-  margin-bottom: 20px;
+  margin-bottom: 18px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
+  min-height: 76px;
+  justify-content: center;
 }
 
 .events__meta-date {
   font-family: 'Cinzel', serif;
-  font-size: 1.05rem;
+  font-size: 1.02rem;
   font-weight: 700;
   color: #5C2434;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
 }
 
 .events__meta-time {
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   color: #A3485E;
 }
 
 .events__meta-loc {
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 500;
   color: #666;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
 }
 
-/* Attire Box */
+/* Attire Box: Equal height to align descriptions on the exact same baseline */
 .events__card-attire {
-  background: rgba(245, 238, 227, 0.65);
+  background: rgba(245, 238, 227, 0.75);
   border: 1px solid rgba(197, 160, 89, 0.35);
   border-radius: 8px;
   padding: 10px 14px;
   margin-bottom: 18px;
   text-align: center;
+  min-height: 58px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .events__card-attire--gold {
-  background: rgba(245, 220, 163, 0.18);
-  border-color: rgba(197, 160, 89, 0.6);
+  background: rgba(245, 220, 163, 0.22);
+  border-color: rgba(197, 160, 89, 0.65);
 }
 
 .attire-label {
@@ -1273,26 +1284,31 @@ a {
   font-family: 'Montserrat', sans-serif;
   font-size: 0.62rem;
   font-weight: 700;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: #8C6D2D;
-  margin-bottom: 3px;
+  margin-bottom: 2px;
 }
 
 .attire-val {
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 500;
   color: #2C2C2C;
   letter-spacing: 0.02em;
 }
 
+/* Description text: equal flex space so buttons pin cleanly to the bottom */
 .events__card-text {
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   color: #6A605A;
-  line-height: 1.65;
+  line-height: 1.6;
   margin-bottom: 24px;
   flex: 1;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Calendar Button */
@@ -1305,7 +1321,7 @@ a {
   padding: 12px 24px;
   background: #FFFDF9;
   color: #5C2434;
-  border: 1px solid rgba(92, 36, 52, 0.35);
+  border: 1px solid rgba(92, 36, 52, 0.45);
   border-radius: 50px;
   font-family: 'Montserrat', sans-serif;
   font-size: 0.74rem;
@@ -1326,19 +1342,19 @@ a {
 }
 
 .events__cal-btn--royal {
-  background: linear-gradient(135deg, #F5DCA3 0%, #C5A059 100%);
-  color: #1A0A10;
-  border: 1px solid #F5DCA3;
-  box-shadow: 0 6px 20px rgba(197, 160, 89, 0.35);
+  background: linear-gradient(135deg, rgba(245, 220, 163, 0.35) 0%, rgba(197, 160, 89, 0.22) 100%);
+  color: #5C2434;
+  border: 1.2px solid #C5A059;
   font-weight: 700;
+  box-shadow: 0 4px 14px rgba(197, 160, 89, 0.22);
 }
 
 .events__cal-btn--royal:hover {
-  background: linear-gradient(135deg, #FFFFFF 0%, #F5DCA3 100%);
-  color: #1A0A10;
-  border-color: #FFFFFF;
+  background: #5C2434;
+  color: #F5DCA3;
+  border-color: #5C2434;
   transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(197, 160, 89, 0.5);
+  box-shadow: 0 8px 24px rgba(92, 36, 52, 0.3);
 }
 
 /* ---------- Quote Section ---------- */
